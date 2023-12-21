@@ -1,0 +1,148 @@
+{% include './cabecera_index.html' %}
+
+<div class="container-fluid">
+
+  <div class="row mt-2">
+    <div class="col-md-1"></div>
+    <div class="col-md-9 ">
+      <div class="card border-primary">
+        <div class="card-header text-white bg-primary  mb-1 ">
+          <h3><i class="bi bi-plus-square"></i> Agregar un Producto</h3>
+        </div>
+        <div class="card-body">
+          <!-- <strong><i class="bi bi-info-circle"></i> kjkj </strong>kj
+                    <br> -->
+          <!-- <form class="row g-3" method="post" id="sample_form"> -->
+
+          <!-- <!-- </form> -->
+          <form class="row g-3 needs-validation" action="/catalogo/productos/agregar" method="post"
+            enctype="multipart/form-data" novalidate> 
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="col-md-5">
+              <label for="txtCodigo" class="form-label">Codigo Producto</label>
+              <div class="input-group has-validation">
+                <!-- <span class="input-group-text" id="inputGroupPrepend">@</span> -->
+                <input type="text" class="form-control text-uppercase" id="txtCodigo" name="txtCodigo"
+                  placeholder="Ingrese codigo producto" aria-describedby="inputGroupPrepend" required minlength="10"
+                  maxlength="30">
+                <div class="invalid-feedback">
+                  Por favor Ingrese Codigo Producto, 15 letras minimo y maximo 30
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <label for="txtCodProv" class="form-label">Codigo Proveedor</label>
+              <div class="input-group has-validation">
+                <!-- <span class="input-group-text" id="inputGroupPrepend">@</span> -->
+                <input type="text" class="form-control text-uppercase " id="txtCodProv" name="txtCodProv"
+                  placeholder="Ingrese Numero Proveedor" aria-describedby="inputGroupPrepend" required minlength="1"
+                  maxlength="40">
+                <div class="invalid-feedback">
+                  Por favor Ingrese codigo proveedor, maximo 40
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-2">
+              <label for="txtExistencia" class="form-label">Existencia</label>
+              <div class="input-group has-validation">
+                <!-- <span class="input-group-text" id="inputGroupPrepend">@</span> -->
+                <input type="text" class="form-control" id="txtExistencia" name="txtExistencia"
+                  aria-describedby="inputGroupPrepend" required>
+                <div class="invalid-feedback">
+                  Por favor solo ingrese cero si es primera vez
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <label for="txtDescripcion" class="form-label">Descripcion</label>
+              <div class="input-group has-validation">
+                <!-- <span class="input-group-text" id="inputGroupPrepend">@</span> -->
+                <input type="text" class="form-control text-uppercase" id="txtDescripcion" name="txtDescripcion"
+                  aria-describedby="inputGroupPrepend" required minlength="20" maxlength="250">
+                <div class="invalid-feedback">
+                  Por favor Ingrese su contraseña, 20 letras minimo y maximo 250
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label for="txtUM" class="form-label">U.M.</label>
+              <select class="form-select" id="txtUM" name="txtUM" required>
+                {% for umb in unidades %}
+                <option value="{{ umb[1] }}">{{ umb[1] }}</option>
+                {% endfor %}
+              </select>
+              <div class="invalid-feedback">
+                Por favor seleccione una opcion para la Unidad de Medida.
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label for="txtMarca" class="form-label">Marca</label>
+              <select class="form-select" id="txtMarca" name="txtMarca" required>
+
+                {% for marquita in marcas %}
+                <option value="{{ marquita[1] }}">{{ marquita[1] }}</option>
+                {% endfor %}
+              </select>
+              <div class="invalid-feedback">
+                Por favor seleccione una opcion para la Marca de su Producto.
+              </div>
+            </div>
+            <div class="col-md-3 ">
+              <label for="txtPVenta" class="form-label">Precio de Venta</label>
+              <input type="text" class="form-control" id="txtPVenta" name="txtPVenta" value="0.00" required>
+              <div class="invalid-feedback">
+                Por favor ingrese precio de venta si es primera ponga 0.00
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label for="txtPCosto" class="form-label">Precio Costo</label>
+              <input type="text" class="form-control" id="txtPCosto" name="txtPCosto" value="0.00" required>
+              <div class="invalid-feedback">
+                Por favor ingrese precio costo si es primera ponga 0.00
+              </div>
+            </div>
+
+            <div class="col-md-8">
+              <label for="txtProdServSAT" class="form-label">Clave Producto-Servicios</label>
+              <input type="text" class="form-control" name="txtProdServSAT" id="txtProdServSAT" required>
+              <div class="invalid-feedback">
+                Por favor seleccione un Producto/Servicio para el SAT.
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label for="txtUMSat" class="form-label">Codigo UM SAT</label>
+              <input type="text" class="form-control" name="txtUMSat" id="txtUMSat" required>
+              <div class="invalid-feedback">
+                Por favor seleccione una unidad de medidad del SAT
+              </div>
+            </div>
+
+            <div class="col-12 d-grid gap-2 d-md-flex justify-content-md-end">
+              <!-- <button class="btn btn-primary" type="submit">Submit form</button> -->
+              <!-- <button type="button" class="btn btn-warning" history.go(-1);  data-bs-dismiss="modal"><i class="bi bi-x-circle"></i> Cancelar</button> -->
+              <a name="" id="" class="btn btn-danger" href="javascript:window.location.replace('/catalogo/productos')" role="button"><i
+                  class="bi bi-chevron-double-left"></i> Cancelar</a>
+              <button type="submit" class="btn btn-success"> <i class="bi bi-floppy"></i> Guardar</button>
+              <!-- <input type="submit" name="save" id="save" class="btn btn-info" value="Save" / -->
+            </div>
+          </form>
+          <!-- <div  id="process" style="display:none;">
+            <div class="progress">
+              <div class="progress-bar progress-bar-striped active bg-success" role="progressbar" aria-valuemin="0"
+                aria-valuemax="100" style="width: 0;" ></div>
+            </div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+{% include './pie_index.html' %}
+
+{% block jscript %}
+<script src="{{ url_for('static', filename='js/load_json_select.js')}}"></script>
+{% endblock %}

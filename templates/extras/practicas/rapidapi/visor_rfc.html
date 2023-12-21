@@ -1,0 +1,179 @@
+{% include './cabecera_index.html' %} 
+{% block estiloCSS %}
+<!-- <link rel="stylesheet"  href="{{ url_for('static', filename='css/estilo_tabla.css') }}" /> -->
+{% endblock %}
+
+<!-- {% block title %} Listado de Usuarios {% endblock %} -->
+
+<div class="container-fluid" style=" font-size: .8rem;">
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+      
+      <!-- Account details card-->
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white"> <strong><i class="bi bi-bar-chart-line"></i></strong>  Generar Informacion de Constancia de Situacion Fiscal</div>
+        <div class="card-body">
+          <form id="frmConstancia" >
+            <!-- Form Row-->
+            <div class="row ">
+              <!-- Form Group (first name)-->
+              <div class="col-md-4">
+                <label class="small mb-1 fw-bolder" for="inputRFC">RFC</label>
+                <input class="small form-control" id="inputRFC" type="text" placeholder="Ingrese su RFC" value="MASC870109F82">
+              </div>
+              <!-- Form Group (last name)-->
+              <div class="col-md-5">
+                <label class="small mb-1 fw-bolder" for="inputConstancia">Id Constancia</label>
+                <input class="form-control" id="inputConstancia" type="text" placeholder="Ingrese el ID de su CSF" value="22120242709">
+              </div>
+              <div class="col-md-3 d-grid gap-2">
+                <!-- Save changes button-->
+                <button class="btn btn-success btn-sm" type="submit">Generar Informacion</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" id="frmDetalleConstancia" style="display: none;">
+    
+    <div class="col-md-12">
+      <!-- Account details card-->
+      <div class="card mb-4">
+        <div class="card-header"><strong><i class="bi bi-list-check"></i></strong>  Detalles de la Constancia Situacion Fiscal</div>
+        <div class="card-body">
+          <form>
+            <!-- Form Row-->
+            <div class="row ">
+              <!-- Form Group (first name)-->
+              <div class="col-md-4">
+                <label class="small mb-1 fw-bolder" for="detalleCURP">CURP</label>
+                <div class="input-group input-group-sm mb-3">
+                  <input class="form-control" id="detalleCURP" type="text" >
+                </div>
+              </div>
+              <!-- Form Group (last name)-->
+              <div class="col-md-8">
+                <label class="small mb-1 fw-bolder" for="detalleNombre">Nombre Fiscal</label>
+                <div class="input-group input-group-sm mb-3">
+                  <input class="form-control" id="detalleNombre" type="text">
+                </div>
+              </div>
+              
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <label class="small mb-1 fw-bolder" for="detalleFechaI">F.Inicio Operaciones</label>
+                <div class="input-group input-group-sm mb-3">
+                  <input class="form-control" id="detalleFechaI" type="text" >
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="small mb-1 fw-bolder" for="detalleEstadoC">Estado Contribuyente</label>
+                <div class="input-group input-group-sm mb-3">
+                  <input class="form-control" id="detalleEstadoC" type="text" >
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="small mb-1 fw-bolder" for="detalleFechaCamb">Fecha Ultimo Cambio</label>
+                <div class="input-group input-group-sm mb-3">
+                  <input class="form-control" id="detalleFechaCamb" type="text" >
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <label class="small mb-1 fw-bolder" for="detalleCP">Codigo Postal</label>
+                <div class="input-group input-group-sm mb-3">
+                  <input class="form-control" id="detalleCP" type="text" >
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label class="small mb-1 fw-bolder" for="detalleEstado">Estado</label>
+                <div class="input-group input-group-sm mb-3">
+                  <input class="form-control" id="detalleEstado" type="text" >
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label class="small mb-1 fw-bolder" for="detalleMunicipio">Municipio</label>
+                <div class="input-group input-group-sm mb-3">
+                  <input class="form-control" id="detalleMunicipio" type="text" >
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="small mb-1 fw-bolder" for="detalleColonia">Colonia</label>
+                <div class="input-group input-group-sm mb-3">
+                  <input class="form-control" id="detalleColonia" type="text" >
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-3">
+                <label class="small mb-1 fw-bolder" for="detalleNoExterior">No. Ext</label>
+                <div class="input-group input-group-sm mb-3">
+                  <input class="form-control" id="detalleNoExterior" type="text" >
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label class="small mb-1 fw-bolder" for="detalleNoInterior">No. Int</label>
+                <div class="input-group input-group-sm mb-3">
+                  <input class="form-control" id="detalleNoInterior" type="text" >
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label class="small mb-1 fw-bolder" for="detalleTipoVial">Tipo Vialidad</label>
+                <div class="input-group input-group-sm mb-3">
+                  <input class="form-control" id="detalleTipoVial" type="text" >
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label class="small mb-1 fw-bolder" for="detalleAL">AL</label>
+                <div class="input-group input-group-sm mb-3">
+                  <input class="form-control" id="detalleAL" type="text" >
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-5">
+                <label class="small mb-1 fw-bolder" for="detalleNombreV">Nombre de la Vialidad</label>
+                <div class="input-group input-group-sm mb-3">
+                  <input class="form-control" id="detalleNombreV" type="text" >
+                </div>
+              </div>
+              <div class="col-md-7">
+                <label class="small mb-1 fw-bolder" for="detalleCorreo">COrreo Electronico</label>
+                <div class="input-group input-group-sm mb-3">
+                  <input class="form-control" id="detalleCorreo" type="text" >
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-3">
+                <label class="small mb-1 fw-bolder" for="detalleFechaA">Fecha Alta</label>
+                <div class="input-group input-group-sm mb-3">
+                  <input class="form-control" id="detalleFechaA" type="text" >
+                </div>
+              </div>
+              <div class="col-md-9">
+                <label class="small mb-1 fw-bolder" for="detalleTipoReg">Tipo Regimen</label>
+                <div class="input-group input-group-sm mb-3">
+                  <select class="form-select" id="detalleTipoReg" ></select>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% block jscript %}
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+<script src="{{ url_for('static', filename='js/siat.js')}}"></script>
+{% endblock %}
+
+{% include './pie_index.html' %} 

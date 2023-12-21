@@ -1,0 +1,141 @@
+{% extends './base.html' %}
+
+{% block title %} Home {% endblock %}
+<!-- {% block customCSS %}
+   
+{% endblock %} -->
+
+{% block body %}
+    <!-- <h1>Bienvenido, {{ current_user.fullname }}</h1>
+    <a class="btn btn-secondary" href="{{ url_for('logout') }}">Logout</a> -->
+
+    <!-- <div class="container-fluid">
+        <div class="row justify-content-center align-content-center">
+            <div class="col-8 barra">
+                <h4 class="text-light">Logo</h4>
+            </div>
+            <div class="col-4 text-right barra">
+                <ul class="navbar-nav mr-auto">
+                    <li>
+                        <a href="#" class="px-3 text-light perfil dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user-circle user"></i></a>
+
+                        <div class="dropdown-menu" aria-labelledby="navbar-dropdown">
+                            <a class="dropdown-item menuperfil cerrar" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt m-1"></i>Salir
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div> -->
+    
+    <!-- <div class="container-fluid">
+        <div class="row">
+            <div class="barra-lateral col-12 col-sm-auto">
+                <nav class="menu d-flex d-sm-block justify-content-center flex-wrap">
+                    <a href="#"><i class="fas fa-home"></i><span>Inicio</span></a>
+                    <a href="#"><i class="fas fa-home"></i><span>Inicio</span></a>
+                    <a href="#"><i class="fas fa-home"></i><span>Inicio</span></a>
+                    <a href="#"><i class="fas fa-home"></i><span>Inicio</span></a>
+
+                    <li class="menu-item-has-children dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-table"></i>Tables</a>
+                        <ul class="sub-menu children dropdown-menu">
+                        <li><i class="fa fa-table"></i><a href="tables-basic.html">Basic Table</a></li>
+                        <li><i class="fa fa-table"></i><a href="tables-data.html">Data Table</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="widgets.html"> <i class="menu-icon ti-email"></i>Widgets </a>
+                    </li>
+                </nav>
+            </div>
+            <main class="main col">
+                <div class="row justify-content-center align-content-center text-center">
+                    <div class="columna col-lg-6">
+                        CONTENIDO
+                    </div>
+
+                </div>
+
+            </main>
+        </div>
+    </div> -->
+    <div id="wrapper">
+        <div class="overlay"></div>
+        
+    
+        <!-- Sidebar -->
+        <nav class="navbar navbar-inverse fixed-top" id="sidebar-wrapper" role="navigation">
+            <ul class="nav sidebar-nav">
+                <div>
+                    <center><img class="img logo rounded-circle mb-3 text-center" src="{{ url_for('static', filename='img/pv_sale.png')}}" alt="" style="background: white; display: flex; justify-content: center;" height="100"></center>
+                </div>
+                <div class="sidebar-header">
+                    
+                    <div class="sidebar-brand">
+                        
+                        <a href="#">PV WeB Control</a>
+                        
+                    </div>
+                </div>
+                <li><a href="/home">Panel Informativo></a></li>
+                <li><a href="#about">About</a></li>
+                <li class="dropdown">
+                    <a href="#works" class="dropdown-toggle" data-toggle="dropdown">Catalogos <span class="caret"></span></a>
+                    <ul class="dropdown-menu animated fadeInLeft" role="menu">
+                        <div class="dropdown-header">Articulos</div>
+                        <li><a href="#pictures">Clientes</a></li>
+                        <li><a href="#videos">Proveedores</a></li>
+                        <li><a href="#books">Marcas</a></li>
+                        <li><a href="#art">Folios</a></li>
+                        <li><a href="#awards">Otros...</a></li>
+                    </ul>
+                </li>
+                <li><a href="#events">Events</a></li>
+                <li><a href="#team">Team</a></li>
+                <li class="dropdown">
+                    <a href="#works" class="dropdown-toggle" data-toggle="dropdown">Works <span class="caret"></span></a>
+                    <ul class="dropdown-menu animated fadeInLeft" role="menu">
+                        <div class="dropdown-header">Dropdown heading</div>
+                        <li><a href="#pictures">Pictures</a></li>
+                        <li><a href="#videos">Videeos</a></li>
+                        <li><a href="#books">Books</a></li>
+                        <li><a href="#art">Art</a></li>
+                        <li><a href="#awards">Awards</a></li>
+                    </ul>
+                </li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="{{ url_for('logout') }}">Desconectarse</a></li>
+            </ul>
+        </nav>
+        <!-- /#sidebar-wrapper -->
+        
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <button type="button" class="hamburger animated fadeInLeft is-closed" data-toggle="offcanvas">
+                <span class="hamb-top"></span>
+                <span class="hamb-middle"></span>
+                <span class="hamb-bottom"></span>
+            </button>
+
+            
+            
+        </div>
+        <!-- /#page-content-wrapper -->
+        <div class="container">
+            {% block contenedor %}
+
+            {% endblock %}
+            
+        </div>
+    </div>
+    <!-- /#wrapper -->
+    <!-- partial -->
+    
+<!-- {% endblock %}
+{% block jscript %}
+     -->
+    
+{% endblock %}

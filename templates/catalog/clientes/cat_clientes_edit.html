@@ -1,0 +1,141 @@
+{% include './cabecera_index.html' %}
+{% block estiloCSS %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo_formulario.css') }}">
+{% endblock %}
+
+<div class="container-fluid ">
+  <!-- <div id="bloquea" class=" loader" style="display:block;"></div> -->
+  <div class="row mt-2">
+    <div class="col-md-1 "></div>
+    <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+      <di class="card border-primary contenedor_cte">
+        <div class="card-header text-white bg-primary  mb-1 ">
+          <h3><i class="bi bi-pencil"></i> Modificando Cliente con RFC [ <span class="cte_rfc"> {{ cliente_edit[1]  }} </span>  ]</h3>
+        </div>
+        <div class="card-body">
+          <!-- <strong><i class="bi bi-info-circle"></i> kjkj </strong>kj action="" method="post" id="sample_form"
+                    <br> -->
+                    
+          <form id="frmClientesEdit" class="row formulario" >
+            <!-- <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"> -->
+            <div class="col-md-12">
+              <h5><span class="form-control g-2 badge bg-warning text-dark"><i class="bi bi-indent"></i> Navegue en cada campo de camptura con
+                  [TAB] (solo RFC y CODIGO POSTAL valida)</span></h5>
+            </div>
+            <div class="col-md-3">
+              <label for="txtRFC" class="form-label fw-bolder">RFC </label>
+              <input type="text" class="form-control text-uppercase" id="txtRFC" name="txtRFC" minlength="12"
+                maxlength="13" data-bs-toggle="tooltip" data-bs-placement="top"
+                title="Digite el RFC como esta en la Constancia de Situacion Fiscal" autocomplete="off" 
+                value="{{ cliente_edit[1] }}" disabled>
+              <pre id="resultado"></pre>
+            </div>
+            <div class="col-md-9">
+              <label for="txtRazonSocial" class="form-label fw-bolder">Razon Social</label>
+              <input type="text" class="form-control text-uppercase" id="txtRazonSocial" name="txtRazonSocial" minlength="1"
+                maxlength="250" data-bs-toggle="tooltip" data-bs-placement="top"
+                title="Digite la Razon Social como esta en la Constancia de Situacion Fiscal" autocomplete="off"
+                value="{{ cliente_edit[2] }}" autofocus>
+            </div>
+
+            <div class="col-md-12 mt-1">
+              <label for="txtNombreComercial" class="form-label fw-bolder">Nombre Comercial</label>
+              <input type="text" class="form-control " id="txtNombreComercial" name="txtNombreComercial"
+                minlength="1" maxlength="250" data-bs-toggle="tooltip" data-bs-placement="top"
+                title="Digite el Nombre Comercial en caso de tenerlo" autocomplete="off"
+                value="{{ cliente_edit[3] }}">
+            </div>
+            <div  id="fondo" class="cargando" style="display:none;" >
+            <div id="bloquea" class="loader" style="display:none;"></div>
+            </div>
+            <div class="col-md-8 mt-2">
+              <label for="txtCalle" class="form-label fw-bolder">Calle</label>
+              <input type="text" class="form-control" id="txtCalle" name="txtCalle" data-bs-toggle="tooltip"
+                data-bs-placement="top" title="Escriba la direccion registrada ante el SAT debe ser identica al CSF" 
+                autocomplete="off" value="{{ cliente_edit[4] }}">
+            </div>
+            <div class="col-md-2 mt-2">
+              <label for="txtNoExterior" class="form-label fw-bolder">No Exterior</label>
+              <input type="text" class="form-control" id="txtNoExterior" name="txtNoExterior" data-bs-toggle="tooltip"
+                data-bs-placement="top" title="Digite el numero interior " autocomplete="off"
+                value="{{ cliente_edit[5] }}">
+            </div>
+            <div class="col-md-2 mt-2">
+              <label for="txtNoInterior" class="form-label">No Interior</label>
+              <input type="text" class="form-control" id="txtNoInterior" name="txtNoInterior" data-bs-toggle="tooltip"
+                data-bs-placement="top" title="OPCIONAL - Digite su numero interior" autocomplete="off"
+                value="{{ cliente_edit[6] }}">
+            </div>
+
+            <div class="col-md-2 mt-2">
+              <label for="txtCodigoPostal" class="form-label fw-bolder">Codigo Postal</label>
+              <input type="text" class="form-control" name="txtCodigoPostal" id="txtCodigoPostal" maxlength="5"
+                data-bs-toggle="tooltip" data-bs-placement="top"
+                title="Digite su CODIGO POSTAL(5 DIGITOS) y presione [TAB]" 
+                value="{{ cliente_edit[7] }}" autocomplete="off">
+            </div>
+            <div class="col-md-3 mt-2">
+              <label for="txtEstado" class="form-label">Estado</label>
+              <input type="text" class="form-control" name="txtEstado" id="txtEstado" data-bs-toggle="tooltip"
+                data-bs-placement="top" title="No Ingrese ningun Dato solo aparece al digitar CODIGO POSTAL" 
+                value="{{ cliente_edit[8] }}" autocomplete="off">
+            </div>
+            <div class="col-md-4 mt-2">
+              <label for="txtMunicipio" class="form-label">Municipio</label>
+              <input type="text" class="form-control" name="txtMunicipio" id="txtMunicipio" data-bs-toggle="tooltip"
+                data-bs-placement="top" title="No Ingrese ningun Dato solo aparece al digitar CODIGO POSTAL" 
+                value="{{ cliente_edit[9] }}" autocomplete="off">
+            </div>
+            <div class="col-md-3 mt-2">
+                <label for="txtCiudad" class="form-label">Ciudad</label>
+                <select class="form-select" id="txtCiudad" name="txtCiudad" data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Seleccione un opcion de acuerdo a la Constancia de Situacion Fiscal">
+                <!-- <option value="{{ cliente_edit[10] }}" selected>{{ cliente_edit[10] }}</option> -->
+                {% for ciudad in asentamientos %}
+                {% if ciudad[0] == cliente_edit[10] %}
+                <option value="{{ cliente_edit[10] }}" selected>{{ cliente_edit[10] }}</option>
+                {% else %}
+                <option value="{{ cliente_edit[10] }}">{{ cliente_edit[10] }}</option>
+                {% endif %}
+                {% endfor %}
+                </select> 
+                
+            </div>
+
+            <div class="col-md-6 mt-2">
+              <label for="txtRegimenFiscal" class="form-label fw-bolder">Regimen Fiscal</label>
+              <input type="text" class="form-control" name="txtRegimenFiscal" id="txtRegimenFiscal"
+                data-bs-toggle="tooltip" data-bs-placement="top"
+                title="AUTOCOMPLETE - digite una palabra del regimen fiscal y saldra la sugerencia" 
+                value="{{ cliente_edit[11] }}" autocomplete="off">
+            </div>
+            <div class="col-md-6 mt-2">
+              <label for="txtCorreo" class="form-label fw-bolder">Correo Electronico</label>
+              <input type="email" class="form-control" name="txtCorreo" id="txtCorreo" data-bs-toggle="tooltip"
+                data-bs-placement="top" title="Digito el correo electronico para enviar los archivos PDF y XML" 
+                value="{{ cliente_edit[12] }}" autocomplete="off">
+            </div>
+            <div class="col-md-12">
+              <hr>
+            </div>
+            <div class="col-md-12 mt-1 d-grid gap-2 d-md-flex justify-content-md-end">
+              <!-- <button class="btn btn-primary" type="submit">Submit form</button> -->
+              <!-- <button type="button" class="btn btn-warning" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i> Cancelar</button> -->
+              <a name="" id="" class="btn btn-danger" href="javascript:window.location.replace('/catalogo/clientes')" role="button"><i
+                  class="bi bi-chevron-double-left"></i> Cancelar</a>
+              <button type="submit" name="submit" id="submit" class="btn btn-success"> <i class="bi bi-floppy"></i> Guardar</button>
+              
+            </div>
+          </form>
+        </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+{% include './pie_index.html' %}
+{% block jscript %}
+<script src="{{ url_for('static', filename='js/busca_cp_cliente.js') }}"></script>
+{% endblock %}

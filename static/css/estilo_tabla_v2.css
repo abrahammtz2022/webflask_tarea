@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;500&display=swap');
+thead,
+tfoot {
+  background-color: #0d6efd;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+}
+/* thead th,
+tfoot th { */
+  /* font-family: 'Sofia Sans Extra Condensed', sans-serif; */
+  /* font-size: 0.9rem; */
+/* } */
+th[scope="row"] {
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+table {
+  border-collapse: collapse;
+  /* border: 2px solid rgb(200, 200, 200); */
+  letter-spacing: 1px;
+  font-family: 'Montserrat', sans-serif;
+ 
+}
+tbody tr:hover {
+  background-color: rgb(63, 52, 219)!important;
+  color: #fff !important;
+}
+.mover_abajo{
+    padding-top: 70px;
+}
+td,
+th {
+  border: 1px solid rgb(190, 190, 190);
+  padding: 5px 10px;
+}
+
+td {
+  text-align: left;
+  font-size: 0.7rem;
+}
+/* CREA MARGEN SOMBREADO AL CONTENEDOR QUE MANTIENE EL DATATABLE */
+.container {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10PX;
+  border-bottom-right-radius: 10px;
+  box-sizing: border-box;
+  box-shadow: 0 0 20px 0 rgba(48, 21, 199, 0.3);
+  margin-bottom: auto;
+
+}
+.container:hover {
+  box-shadow: 20px 20px 80px -40px #000;
+  transition: 0.5s ease-in-out;
+  cursor: pointer;
+}
+
+/* CREA MARGEN SUPERIOR A LOS BOTONES DE LA TABLA DE EXPORTACION */
+div.dt-buttons {
+  padding-top: 1em;
+}
+/* CREA MARGEN INFERIOR A LOS BOTONES DE NAVEGACION  */
+div.dataTables_paginate{
+  padding-bottom: 1em;
+}
+/* DA FORMATO AL LABEL DE SEARCH QUE NO CUENTA CON ID */
+div.dataTables_wrapper div.dataTables_filter label {
+  color: #0d6efd;
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+.dataTables_filter{ 
+    
+    position: absolute;
+    z-index: 2;
+    /* float: left !important; */
+    left: 330px !important;
+    /* right: -100px; */
+}
+
+
+/* DA FORMATO AL LABEL DE LA SEPARACION DE FILAS(MOSTRAR) */
+div.dataTables_wrapper div.dataTables_length label {
+
+  color: #0d6efd;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+/* DA FORMATO AL LABEL DE MOSTRANDO ENTRADAS */
+div.dataTables_wrapper div.dataTables_info {
+  color: #0d6efd;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+/* div#TablaMostrador_length{
+  position:absolute; top:1px; left:0;
+} */
+/* DA FORMATO AL SELECT DE MOSTRAR FILAS */
+div.dataTables_wrapper div.dataTables_length .form-select {
+  outline: 1px solid #0d6efd;
+  box-shadow: 3px 3px 5px #0d9fff;
+  font-size: 1.2rem;
+  background-color: #fff;
+  color: #0d6efd;
+}
+
+/* FORMATO AL INPUT SEARCH QUE NO CUENTA CON ID NI NAME */
+input[type="search"] {
+  width: 950px !important;
+  /* left: -100px !important; */
+  margin-bottom: 25px;
+  margin-top: 15px;
+  font-size: 20px;
+  border: 2;
+  outline: 1px solid black;
+  box-shadow: 3px 3px 5px #0d6efd;
+  padding: 5px 9px;
+  
+  background-color: #fff;
+  color: #0d6efd !important;
+}
+/* DA FORMATO AL FOCUS DEL INPUT SEARCH */
+input[type="search"]:focus {
+  /* color: black; */
+  outline: 1px solid #0d6efd;
+  box-shadow: 0 0 5px 5px #0d9fff;
+}
+/* LE DA FORMATO SOMBREADO AL BOTON DE AGREGAR */
+.botoncito {
+  box-shadow: 3px 3px 5px #0d6efd;
+}
+
+/* Cuando la pantalla es menor a 900px  (tablets y teléfonos inteligentes)*/
+@media only screen and (max-width : 900px) {
+  .dataTables_filter{
+    left: 40px !important;
+  }
+  input[type="search"] {
+    width: 310px !important;
+  }
+  
+	
+ 
+	
+}

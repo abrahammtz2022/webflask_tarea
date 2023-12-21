@@ -1,0 +1,58 @@
+{% extends './base.html' %}
+
+{% block title %} Login {% endblock %}
+
+<!-- {% block customCSS %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %} -->
+{% block body %}
+<form class="form-signin" action="/login" method="POST">
+  <img class="mb-4" src="{{ url_for('static', filename='img/logo.png')}}" alt="" width="100" height="57">
+  {% with messages = get_flashed_messages(with_categories=True) %}
+
+  {% if messages %}
+  <br />
+  {% for category, message in messages %}
+  {% if category == 'warning' %}
+  <div class="alert alert-warning alert-dismissible fase show" role="alert">
+    <strong style="font-size: 14px;">{{ message }}</strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  {% else %}
+  <div class="alert alert-success alert-dismissible fase show" role="alert">
+    <strong style="font-size: 14px;">{{ message }}</strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  {% endif %}
+
+  {% endfor %}
+  {% endif %}
+
+  {% endwith %}
+  <h1 class="h3 mb-3 fw-normal">Por favor Identificate</h1>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="form-floating">
+    <label for="username">Usuario:</label>
+    <input type="text" class="form-control" id="username" name="username" placeholder="Username" required autofocus>
+
+  </div>
+  <br>
+  <div class="form-floating">
+    <label for="password">Contraseña:</label>
+    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+
+  </div>
+
+  <!-- <div class="checkbox mb-3">
+      <label>
+        <input type="checkbox" value="remember-me"> Remember me
+      </label>
+    </div> -->
+  <button class="w-100 btn btn-lg btn-primary" type="submit">Ingresar al Sistema</button>
+  <p class="mt-5 mb-3 text-muted">&copy; Derechos Registrados MR-AB-MTZ</p>
+</form>
+{% endblock %}

@@ -1,0 +1,134 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;500&display=swap");
+* {
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+td,
+th,
+tr,
+table {
+  border-top: 1px solid black;
+  border-collapse: collapse;
+  font-size: 0.8em;
+}
+td.cantidad,
+th.cantidad {
+  width: 25px;
+  max-width: 25px;
+  word-break: break-all;
+  text-align: right;
+}
+td.codigo,
+th.codigo {
+  width: 55px;
+  max-width: 55px;
+  word-break: break-all;
+}
+td.producto,
+th.producto {
+  width: 117px;
+  max-width: 117px;
+}
+td.precio,
+th.precio {
+  width: 45px;
+  max-width: 45px;
+  word-break: break-all;
+  text-align: right;
+}
+td.importe,
+th.importe {
+  width: 45px;
+  max-width: 45px;
+  word-break: break-all;
+  text-align: right;
+}
+td.mensaje {
+  text-align: center;
+}
+.centrado {
+  text-align: center;
+  align-content: center;
+}
+.ticket {
+  width: 300px;
+  max-width: 300px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  box-sizing: border-box;
+  box-shadow: 0 0 25px 0 rgba(48, 21, 199, 0.3);
+  margin-bottom: auto;
+  padding-left: 2px;
+}
+.separador {
+  width: 300px;
+  max-width: 300px;
+
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  box-sizing: border-box;
+  box-shadow: 0 0 25px 0 rgba(48, 21, 199, 0.3);
+
+  margin-top: 10px;
+}
+
+.btn-imprime {
+  margin-top: 15px;
+  margin-left: 20px;
+  margin-bottom: 15px;
+  background-color: #0a0a23;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0px 0px 2px 2px rgb(0, 0, 0);
+  padding: 10px;
+  min-height: 30px;
+  min-width: 120px;
+}
+.btn-imprime:hover {
+  background-color: #002ead;
+  transition: 0.7s;
+}
+.btn-imprime:focus {
+  outline-color: transparent;
+  outline-style: solid;
+  box-shadow: 0 0 0 4px #5a01a7;
+}
+.foot_total {
+  border-top: 1px solid black;
+  border-top-style: double;
+  border-collapse: collapse;
+  text-align: right;
+  font-size: 1.2em;
+}
+span.left {
+  margin-left: 5px;
+}
+img {
+  /* max-width: inherit;
+    width: inherit; */
+  /* width: 100px; 
+    height: 100px; */
+  padding-top: 20px;
+  padding-bottom: 15px;
+  display: block;
+  width: 55%;
+  margin: auto;
+}
+
+@media print {
+  .oculto-impresion,
+  .oculto-impresion * {
+    display: none !important;
+  }
+}

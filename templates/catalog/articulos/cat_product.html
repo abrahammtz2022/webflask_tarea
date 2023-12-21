@@ -1,0 +1,99 @@
+{% include './cabecera_index.html' %} {% block estiloCSS %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/estilo_tabla.css') }}"
+/>
+{% endblock %}
+
+<!-- {% block title %} Listado de Usuarios {% endblock %} -->
+
+<div class="container-fluid">
+  <div class="row mb-2">
+    <div class="col-md-9">
+      <h2 class="mt-2 bold-600">
+        <i class="bi bi-people"></i> Lista de Productos
+      </h2>
+    </div>
+    <!-- d-grid gap-2 d-md-flex justify-content-md-end -->
+    <div class="col-md-3 text-end">
+      <!-- <button type="button" class="btn btn-primary mb-1 " ><i class="bi bi-plus-circle"></i> Agregar Producto</button> -->
+      <a
+        href="{{ url_for('c_productos_agrega_ver')}}"
+        class="btn btn-primary btn-lg botoncito"
+        type="button"
+        tooltip="Agregar Registro"
+      >
+        <i class="bi bi-plus-circle"></i> Agregar Producto
+      </a>
+    </div>
+
+    <hr />
+  </div>
+  <div class="row">
+    {% with messages = get_flashed_messages(with_categories=True) %} {% if
+    messages %}
+    <br />
+    {% for category, message in messages %} {% if category == 'warning' %}
+    <div class="alert alert-warning alert-dismissible fase show" role="alert">
+      <strong style="font-size: 14px">{{ message }}</strong>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      >
+        <!-- <span aria-hidden="true">&times;</span> -->
+      </button>
+    </div>
+    <!-- <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Informacion del Sistema: </strong> You should check in on some of those fields below.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div> -->
+    {% else %}
+    <div class="alert alert-success alert-dismissible fase show" role="alert">
+      <strong style="font-size: 14px">{{ message }}</strong>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      >
+        <!-- <span aria-hidden="true">&times;</span> -->
+      </button>
+    </div>
+    {% endif %} {% endfor %} {% endif %} {% endwith %}
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="container">
+        <div class="table-responsive-xl">
+          <table
+            id="TablaProductos"
+            class="table table-striped table-hover display"
+            style="width: 100%"
+          >
+            <thead>
+              <tr>
+                <th class="idT">#</th>
+                <th class="prodSAT">ProdServ</th>
+                <th class="codigo">Codigo</th>
+                <th class="descrip">Descripcion</th>
+                <th class="codprov">Cod-Prov</th>
+                <th class="um">UM</th>
+                <th class="pventa">PVenta</th>
+                <th class="stock">Stock</th>
+                <th class="accion">Opciones</th>
+              </tr>
+            </thead>
+            <tbody id="carga_productos"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row mt-2"></div>
+{% include './pie_index.html' %} {% block jscript %}
+<script src="{{ url_for('static', filename='js/lista_datable_producto.js')}}"></script>
+{% endblock %}

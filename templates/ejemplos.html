@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>autocomplete demo</title>
+  
+  <!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script> -->
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='drivers/themes.jquery1.13.2-ui.css')}}">
+  <script src="{{ url_for('static', filename='drivers/ajax.googleapis.jquery3.5.1.min.js')}}"></script>
+  <script src="{{ url_for('static', filename='drivers/jquery-ui1.13.2.js')}}"></script>
+
+  <!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">  
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script> -->
+
+  <style>
+    .ui-autocomplete {
+      max-height: 220px;
+      overflow-y: auto;
+      /* prevent horizontal scrollbar */
+      overflow-x: hidden;
+    }
+    /* IE 6 doesn't support max-height
+     * we use height instead, but this forces the menu to always be this tall
+     */
+    * html .ui-autocomplete {
+      height: 100px;
+    }
+    </style>
+</head>
+<body>
+ 
+<label for="autocomplete">Select a programming language: </label>
+<input id="autocomplete">
+<hr>
+<hr>
+
+*<label for="ClaveProdServ">Clave de producto-servicio</label>
+  <input class="form-control" data-val="true" id="ClaveProdServ" name="ClaveProdServ" 
+	placeholder="Escribe..." type="text" value="" />
+  <span style="font-size:11px; font-weight:bold;" id="spanClaveProdServ"></span>
+  <span class="field-validation-valid text-danger" data-valmsg-for="ClaveProdServ" data-valmsg-replace="true"></span>
+
+
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/load_json_select.js')}}"></script>
+ 
+</body>
+</html>

@@ -1,0 +1,14 @@
+{% include './cabecera_index.html' %} 
+{% block estiloCSS %}
+<!-- <link rel="stylesheet"  href="{{ url_for('static', filename='css/estilo_tabla.css') }}" /> -->
+{% endblock %}
+
+
+{% block jscript %}
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+<script src="{{ url_for('static', filename='js/load_practicas.js')}}"></script>
+{% endblock %}
+
+{% include './pie_index.html' %} 

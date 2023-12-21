@@ -1,0 +1,212 @@
+{% include './cabecera_index.html' %}
+
+<!-- {% block title %} Listado de Usuarios {% endblock %} -->
+
+<div class="container-fluid">
+    
+    <div class="row mb-2">
+        <div class="col-md-12">
+            <h3 class="mt-2 bold-600"><i class="bi bi-people"></i> Lista de Usuarios
+                <hr>
+            </h3>
+        </div>
+        
+    </div>
+    <div class="row">
+        {% with messages = get_flashed_messages(with_categories=True) %}
+
+        {% if messages %}
+        <br />
+        {% for category, message in messages %}
+        {% if category == 'warning' %}
+        <div class="alert alert-warning alert-dismissible fase show" role="alert">
+            <strong style="font-size: 14px;">{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                <!-- <span aria-hidden="true">&times;</span> -->
+            </button>
+        </div>
+        <!-- <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Informacion del Sistema: </strong> You should check in on some of those fields below.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div> -->
+        {% else %}
+        <div class="alert alert-success alert-dismissible fase show" role="alert">
+            <strong style="font-size: 14px;">{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                <!-- <span aria-hidden="true">&times;</span> -->
+            </button>
+        </div>
+        {% endif %}
+
+        {% endfor %}
+        {% endif %}
+
+        {% endwith %}
+    </div>
+    <div class="row ">
+        <form class="row " action="" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="col-md-3">
+              <label for="inputBuscar" class="visually-hidden">Busqueda</label>
+              <input type="text" class="form-control" id="inputBuscar" name="inputBuscar" placeholder="Busqueda">
+            </div>
+            <div class="col-md-1">
+              <button type="submit" name="search" class="btn btn-success mb-1"><i class="bi bi-search"></i></button>
+              
+            </div>
+            <div class="col-md-1">
+                <button type="submit" name="recargar" class="btn btn-info mb-1"><i class="bi bi-arrow-clockwise"></i></button>
+            </div>
+            <div class="col-md-7 d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="button" class="btn btn-primary mb-1 " data-bs-toggle="modal" data-bs-target="#ModalAgregarUsuario"><i class="bi bi-plus-circle"></i> Agregar Usuario</button>
+            </div>
+        </form>
+        <!-- ventana modal para agregar usuario -->
+        <!-- Modal -->
+        <div class="modal fade" id="ModalAgregarUsuario" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel"><i class="bi bi-plus-circle"></i> Agregar un Usuario</h5>
+                  <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                </div>
+                <div class="modal-body">
+                    <form class="row g-3 needs-validation" action="/catalogo/usuarios/agregar" method="post" enctype="multipart/form-data" novalidate>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="col-md-6">
+                            <label for="txtUsuario" class="form-label">Usuario</label>
+                            <div class="input-group has-validation">
+                              <span class="input-group-text" id="inputGroupPrepend">@</span>
+                              <input type="text" class="form-control" id="txtUsuario" name="txtUsuario" aria-describedby="inputGroupPrepend" required minlength="6" maxlength="20">
+                              <div class="invalid-feedback">
+                                Por favor Ingrese su Usuario, 6 letras minimo maximo 20
+                              </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="txtPassword" class="form-label">Contraseña</label>
+                            <div class="input-group has-validation">
+                              <span class="input-group-text" id="inputGroupPrepend">@</span>
+                              <input type="password" class="form-control" id="txtPassword" name="txtPassword" aria-describedby="inputGroupPrepend" required minlength="8" maxlength="15">
+                              <div class="invalid-feedback">
+                                Por favor Ingrese su contraseña, 8 letras minimo maximo 15
+                              </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 ">
+                          <label for="txtNombre" class="form-label">Nombre Completo</label>
+                          <input type="text" class="form-control" id="txtNombre" name="txtNombre" placeholder="Ingrese su Nombre por favor..." required maxlength="250">
+                          <div class="invalid-feedback">
+                            Ingresa Nombre Completo por favor...
+                          </div>
+                        </div>
+                        <div class="col-md-12">
+                          <label for="txtDireccion" class="form-label">Direccion</label>
+                          <input type="text" class="form-control" id="txtDireccion" name="txtDireccion" value="" placeholder="Ingrese su Direccion por favor..." required maxlength="250">
+                          <div class="invalid-feedback">
+                            Ingrese su Direccion por favor....
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="txtNivel" class="form-label">Nivel de Usuario</label>
+                            <select class="form-select" id="txtNivel" name="txtNivel" required>
+                              <option selected disabled value="">Seleccione una opcion...</option>
+                              {% for nivel in lista_nivel %}
+                                <option value="{{ nivel[1] }}">{{ nivel[1] }}</option>
+                              {% endfor %}
+                            </select>
+                            <div class="invalid-feedback">
+                              Por favor seleccione una opcion para el Nivel.
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                          <label for="txtPuesto" class="form-label">Puesto de Trabajo</label>
+                          <select class="form-select" id="txtPuesto" name="txtPuesto" required>
+                            <option selected disabled value="">Seleccione una opcion...</option>
+                            {% for puesto in lista_puesto %}
+                                <option value="{{ puesto[1] }}">{{ puesto[1]}}</option>
+                            {% endfor %}
+                          </select>
+                          <div class="invalid-feedback">
+                            Por favor seleccione una puesto de trabajo.
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="txtFechaNac" class="form-label">Fecha Nacimiento</label>
+                            <input type="date" class="form-control" id="txtFechaNac" name="txtFechaNac" placeholder="Ingrese su Direccion por favor..." required>
+                            <div class="invalid-feedback">
+                              Ingrese su Fecha de Nacimiento por favor....
+                            </div>
+                        </div>
+                                               
+                        <div class="col-12 d-grid gap-2 d-md-flex justify-content-md-end">
+                          <!-- <button class="btn btn-primary" type="submit">Submit form</button> -->
+                            <button type="button" class="btn btn-warning" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i> Cancelar</button>
+                            <button type="submit" class="btn btn-success"> <i class="bi bi-floppy"></i> Guardar</button>
+                        </div>
+                      </form>
+                </div>
+                <div class="modal-footer">
+                  <!-- <button type="button" class="btn btn-warning" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i> Cancelar</button>
+                  <button type="submit" class="btn btn-success"> <i class="bi bi-floppy"></i> Guardar</button> -->
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-md-12">
+            
+            <div class="table-responsive">
+                <table class="table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Nombre(s)</th>
+                            <th>Fecha Nacimiento</th>
+                            <th>Fecha Registro</th>
+                            <th>Puesto</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if (usuarios) %}
+                            {% for u in usuarios %}  
+                            <tr>
+                                <th scope="row">{{ u[0] }}</th>
+                                <td>{{ u[1] }}</td>
+                                <td>{{ u[3] }}</td>
+                                <td>{{ u[7] }}</td> 
+                                <td>{{ u[8] }}</td>
+                                <td>{{ u[6] }}</td>
+                                <td>
+                                    <a href="/catalogo/usuarios/mostrar/{{ u[0] }}" class="btn btn-warning btn-sm" type="button" tooltip="Editar Registro">
+                                        <i class="bi bi-pencil"></i>  
+                                    </a>
+                                    <a href="/catalogo/usuarios/eliminar/{{ u[0] }}" class="btn btn-danger btn-sm" type="button" tooltip="Eliminar Registro"
+                                     onclick="return confirm('Confirma desear eliminar el Usuario  {{ u[1] }}?')">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                    <!-- <button class="btn btn-warning" onclick="window.location.href='#'"><i class="bi bi-pencil"></i></button> -->
+                                    <!-- <button class="btn btn-danger btn-sm" onclick="window.location.href='#'"><i class="bi bi-trash"></i></button> -->
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="table-active text-center">No existe registros de Usuarios</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                  </table>
+                  {{ pagination.links }}
+            </div>
+            
+        </div>
+    </div>
+    
+
+</div>
+
+{% include './pie_index.html' %}

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %} PV WeB Control {% endblock %}</title>
+    <!-- se agrega los stylos de bootstrap v5.0.2 -->
+    <!-- Bootstrap -->
+    <link rel="shortcut icon" href="#" />
+    
+    <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100&display=swap" rel="stylesheet"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='drivers/bootstrap-5.0.2-dist/css/bootstrap.min.css')}}" />
+    <!-- DATATABLES -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='drivers/DataTables-1.13.6/css/dataTables.bootstrap5.min.css') }}" />
+    <!-- BOOTSTRAP ICONS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='drivers/bootstrap-icons-1.11.1/bootstrap-icons.css')}}" />
+    <!-- PARA HACER EL AUTOCOMPLETE EN EL INPUT -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='drivers/themes.jquery1.13.2-ui.css')}}" />
+    <!-- <script src="{{ url_for('static', filename='drivers/ajax.googleapis.jquery3.5.1.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='drivers/jquery-ui1.13.2.js')}}"></script> -->
+    <!-- <script src="{{ url_for('static', filename='js/busca_cp_cliente.js') }}"></script> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.9.0/dist/sweetalert2.min.css" />
+
+    
+    <!-- USOS PARA EL SISTEMA -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_index.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cambia_pass.css') }}" />
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo_tabla.css') }}" /> -->
+    {% block estiloCSS %}
+    {% endblock %}
+
+    <!-- <style>
+        .ui-autocomplete {
+            max-height: 220px;
+            overflow-y: auto;
+            /* prevent horizontal scrollbar */
+            overflow-x: hidden;
+        }
+        /* IE 6 doesn't support max-height
+         * we use height instead, but this forces the menu to always be this tall
+         */
+        * html .ui-autocomplete {
+            height: 100px;
+        }
+    </style> -->
+</head>
+
+<body>
+    <!-- navbar inicia -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <!-- offcanvas trigger inicio-->
+            <button class="navbar-toggler me-2" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                <span class="navbar-toggler-icon" data-bs-target="#offcanvasExample"></span>
+            </button>
+
+            <!-- offcanvas trigger fin-->
+
+            <a class="navbar-brand fw-bold me-auto text-primary border border-primary border-2 rounded p-1"
+                href="/home">PV WeB Control</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <form class="d-flex ms-auto">
+                    <div class="input-group my-3 my-lg-0">
+                        <!-- <input type="text" class="form-control" placeholder="Buscar..."
+                            aria-label="Buscar..." aria-describedby="button-addon2">
+                        <button class="btn btn-primary" type="button" id="button-addon2">
+                            <i class="bi bi-search"></i>
+                        </button> -->
+                        <strong class="text-success">Usuario: {{ current_user.UC_USUARIO }} ({{
+                            current_user.UC_NIVEL }})</strong>
+                    </div>
+                </form>
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-fill"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li>
+                                <a class="dropdown-item" href="/catalogo/usuarios">Listado de Usuarios</a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider" />
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('cambiar_password') }}">Cambiar Contraseña</a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider" />
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('logout') }}">Desconectarse</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- navbar finaliza -->
+    <!-- offcanvas inicio -->
+
+    <div class="offcanvas offcanvas-start bg-dark text-white sidebar-nav" tabindex="-1" id="offcanvasExample"
+        aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header text-end">
+            <!-- <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu Lateral</h5> -->
+            <button type="button" class="btn-close text-reset text-end" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <nav class="navbar-dark">
+                <ul class="navbar-nav">
+                    <li>
+                        <a href="/home" class="nav-link px-3 active">
+                            <span class="me-2">
+                                <i class="bi bi-speedometer2"></i>
+                            </span>
+                            <span>PANEL INFORMATIVO</span>
+                        </a>
+                    </li>
+                    <li class="my-1">
+                        <hr class="dropdown-divider" />
+                    </li>
+                    <li class="cabecera2">
+                        <a class="nav-link px-3 sidebar-link active" data-bs-toggle="collapse" href="#collapseExample"
+                            role="button" aria-expanded="false" aria-controls="collapseExample">
+                            <span class="me-2"><i class="bi bi-book"></i></span>
+                            <span>CATALOGOS</span>
+                            <span class="right-icon ms-auto"><i class="bi bi-chevron-down"></i></span>
+                        </a>
+                        <div class="collapse" id="collapseExample">
+                            <div>
+                                <ul class="navbar-nav ps-3">
+                                    <a href="/catalogo/productos" class="nav-link nav-mennu px-3">
+                                        <span class="me-2">
+                                            <i class="bi bi-box-seam"></i>
+                                        </span>
+                                        <span>Articulos</span>
+                                    </a>
+                                </ul>
+                            </div>
+                            <div>
+                                <ul class="navbar-nav ps-3">
+                                    <a href="/catalogo/clientes" class="nav-link nav-mennu px-3">
+                                        <span class="me-2">
+                                            <i class="bi bi-person-lines-fill"></i>
+                                        </span>
+                                        <span>Clientes</span>
+                                    </a>
+                                </ul>
+                            </div>
+                            <div>
+                                <ul class="navbar-nav ps-3">
+                                    <a href="#" class="nav-link nav-mennu px-3">
+                                        <span class="me-2">
+                                            <i class="bi bi-microsoft-teams"></i>
+                                        </span>
+                                        <span>Proveedores</span>
+                                    </a>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="my-1">
+                        <hr class="dropdown-divider" />
+                    </li>
+                    <li class="boton_buscador">
+                        <a href="{{ url_for('c_extras_visor3')}}" class="nav-link px-3 active">
+                            <span class="me-2">
+                                <i class="bi bi-speedometer2"></i>
+                            </span>
+                            <span>BUSCADOR</span>
+                        </a>
+                    </li>
+                    <li class="my-1">
+                        <hr class="dropdown-divider" />
+                    </li>
+                    <li class="cabecera4">
+                        <a class="nav-link px-3 sidebar-link active" data-bs-toggle="collapse"
+                            href="#collapseVerificador" role="button" aria-expanded="false"
+                            aria-controls="collapseExample">
+                            <span class="me-2"><i class="bi bi-terminal"></i></span>
+                            <span>OPERACIONES</span>
+                            <span class="right-icon ms-auto"><i class="bi bi-chevron-down"></i></span>
+                        </a>
+                        <div class="collapse" id="collapseVerificador">
+                            <div>
+                                <ul class="navbar-nav ps-3">
+                                    <a href="/operaciones/ventas/genera_venta_ticket" class="nav-link nav-mennu px-3">
+                                        <span class="me-2">
+                                            <i class="bi bi-receipt-cutoff"></i>
+                                        </span>
+                                        <span>Generar Ticket Venta </span>
+                                    </a>
+                                </ul>
+                            </div>
+                        
+                            <!-- <div>
+                                <ul class="navbar-nav ps-3">
+                                    <a href="/extras/visor2" class="nav-link nav-mennu px-3">
+                                        <span class="me-2">
+                                            <i class="bi bi-cloud-download-fill"></i>
+                                        </span>
+                                        <span>Verifica CURP NSS </span>
+                                    </a>
+                                </ul>
+                            </div> -->
+                        </div>
+                    </li>
+                    <li class="my-1">
+                        <hr class="dropdown-divider text-white" />
+                    </li>
+                    <li class="cabecera">
+                        <a class="nav-link px-3 sidebar-link active" data-bs-toggle="collapse"
+                            href="#collapseHerramientas" role="button" aria-expanded="false"
+                            aria-controls="collapseExample">
+                            <span class="me-2"><i class="bi bi-gear"></i></span>
+                            <span>HERRAMIENTAS</span>
+                            <span class="right-icon ms-auto"><i class="bi bi-chevron-down"></i></span>
+                        </a>
+                        <div class="collapse" id="collapseHerramientas">
+                            <div>
+                                <ul class="navbar-nav ps-3">
+                                    <a href="/subir_prodservsat" class="nav-link nav-mennu px-3">
+                                        <span class="me-2">
+                                            <i class="bi bi-cloud-download-fill"></i>
+                                        </span>
+                                        <span>Subir ProdServSAT a BD </span>
+                                    </a>
+                                </ul>
+                            </div>
+                            <div>
+                                <ul class="navbar-nav ps-3">
+                                    <a href="/subir_umsat" class="nav-link nav-mennu px-3">
+                                        <span class="me-2">
+                                            <i class="bi bi-file-arrow-down-fill"></i>
+                                        </span>
+                                        <span>Subir UMSAT a BD </span>
+                                    </a>
+                                </ul>
+                            </div>
+                            <div>
+                                <ul class="navbar-nav ps-3">
+                                    <a href="/importar_articulos" class="nav-link nav-mennu px-3">
+                                        <span class="me-2">
+                                            <i class="bi bi-file-earmark-arrow-down-fill"></i>
+                                        </span>
+                                        <span>Importar Productos a BD </span>
+                                    </a>
+                                </ul>
+                            </div>
+                            <div>
+                                <ul class="navbar-nav ps-3">
+                                    <a href="{{ url_for('importar_codigopostal') }}" class="nav-link nav-mennu px-3">
+                                        <span class="me-2">
+                                            <i class="bi bi-file-code"></i>
+                                        </span>
+                                        <span>Importar Cod-Postal a BD </span>
+                                    </a>
+                                </ul>
+                            </div>
+                            <div>
+                                <ul class="navbar-nav ps-3">
+                                    <a href="{{ url_for('importar_regimenfiscal') }}" class="nav-link nav-mennu px-3">
+                                        <span class="me-2">
+                                            <i class="bi bi-building-gear"></i>
+                                        </span>
+                                        <span>Importar Reg. Fiscal a BD </span>
+                                    </a>
+                                </ul>
+                            </div>
+                            <div>
+                                <ul class="navbar-nav ps-3">
+                                    <a href="{{ url_for('importar_ubicaciones') }}" class="nav-link nav-mennu px-3">
+                                        <span class="me-2">
+                                            <i class="bi bi-flag-fill"></i>
+                                        </span>
+                                        <span>Importar Ubicaciones </span>
+                                    </a>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="my-1">
+                        <hr class="dropdown-divider" />
+                    </li>
+                    <li class="cabecera3">
+                        <a class="nav-link px-3 sidebar-link active" data-bs-toggle="collapse"
+                            href="#collapseVerificador" role="button" aria-expanded="false"
+                            aria-controls="collapseExample">
+                            <span class="me-2"><i class="bi bi-building-gear"></i></span>
+                            <span>VERIFICADORES</span>
+                            <span class="right-icon ms-auto"><i class="bi bi-chevron-down"></i></span>
+                        </a>
+                        <div class="collapse" id="collapseVerificador">
+                            <div>
+                                <ul class="navbar-nav ps-3">
+                                    <a href="/extras/visor1" class="nav-link nav-mennu px-3">
+                                        <span class="me-2">
+                                            <i class="bi bi-cloud-download-fill"></i>
+                                        </span>
+                                        <span>Verifica RFC </span>
+                                    </a>
+                                </ul>
+                            </div>
+                        
+                            <div>
+                                <ul class="navbar-nav ps-3">
+                                    <a href="/extras/visor2" class="nav-link nav-mennu px-3">
+                                        <span class="me-2">
+                                            <i class="bi bi-cloud-download-fill"></i>
+                                        </span>
+                                        <span>Verifica CURP NSS </span>
+                                    </a>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <!-- offcanvas final -->
+    <main class="mt-5 pt-3 ps-2 pe-2" >
+
+    
+

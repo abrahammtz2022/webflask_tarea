@@ -1,0 +1,28 @@
+.contenedor_cte{
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10PX;
+  border-bottom-right-radius: 10px;
+  box-sizing: border-box;
+  box-shadow: 0 0 25px 0 rgba(48, 21, 199, 0.3);
+  margin-bottom: auto;
+  
+}
+.contenedor_cte:hover {
+  box-shadow: 20px 20px 80px -40px #000;
+  transition: 0.5s ease-in-out;
+  cursor: pointer;
+}
+
+
+input[type="text"],
+input[type="email"],
+.form-select
+ {
+  outline: 1px solid black;
+  box-shadow: 3px 3px 5px #0d6efd;
+}
+.cte_rfc {
+  color: greenyellow;
+  font-weight: bold;
+}

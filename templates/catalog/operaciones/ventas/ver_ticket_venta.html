@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/ver_ticket_venta.css') }}"
+    />
+  </head>
+  <body>
+    <div class="ticket">
+      <div id="wrapper">
+        <!-- <img src="https://yt3.ggpht.com/-3BKTe8YFlbA/AAAAAAAAAAI/AAAAAAAAAAA/ad0jqQ4IkGE/s900-c-k-no-mo-rj-c0xffffff/photo.jpg" 
+                alt="Logotipo"> -->
+        <img
+          src="{{ url_for('static', filename='img/riveroll-logo.png')}}"
+          alt="Logotipo"
+        />
+
+        <span><strong>==========================================</strong></span>
+        <p class="centrado">TICKET DE SURTIDO</p>
+        <span><strong>==========================================</strong></span
+        ><br />
+
+        <span class="left"
+          ><strong>Folio: </strong> {{ encabezado[0].folio }} ||
+          <strong>Fecha: </strong>{{ encabezado[0].fecha.strftime('%d-%m-%Y') }}
+          || <strong>Estado: </strong>{{ encabezado[0].estado }}</span
+        ><br />
+        <span class="left"
+          ><strong>Sucursal: </strong>{{ encabezado[0].sucursal }}</span
+        ><br />
+        <span class="left"
+          ><strong>Vendedor: </strong>{{ encabezado[0].vendedor }}</span
+        ><br />
+        <span class="left"
+          ><strong>Comentario: </strong>{{ encabezado[0].comentario }}</span
+        ><br />
+        <span><strong>==========================================</strong></span
+        ><br /><br />
+        <table>
+          <thead>
+            <tr>
+              <th class="cantidad">CANT</th>
+              <th class="codigo">CODIGO</th>
+              <th class="producto">PRODUCTO</th>
+              <th class="precio">PRECIO</th>
+              <th class="importe">IMPORTE</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- EXAMPLE ROW, substitue the real information from the tickets in the database -->
+            {% if (detalles) %} {% for det in detalles %}
+            <tr>
+              <td class="cantidad">{{det.cant}}</td>
+              <td class="codigo">{{det.codigo}}</td>
+              <td class="producto">{{det.descripcion}}</td>
+              <td class="precio">{{det.precio}}</td>
+              <td class="importe">{{det.importe}}</td>
+            </tr>
+            {% endfor %} {% else %}
+            <tr>
+              <td colspan="5" class="mensaje">
+                No existe registros de Usuarios
+              </td>
+            </tr>
+            {% endif %}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3" class="foot_total">TOTAL:</td>
+              <td colspan="2" class="foot_total">{{ encabezado[0].total }}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <p class="centrado">
+        ¡PASE A CAJA A PAGAR! <br />
+        <br />Ticket de Surtido no valido para efecto Fiscales, cambio de
+        mercancia, cancelacion o comprobante de pago
+      </p>
+    </div>
+    <div class="separador">
+      <button class="oculto-impresion btn-imprime" onclick="imprimir()">
+        Imprimir
+      </button>
+      <button class="oculto-impresion btn-imprime" onclick="cerrarse()">
+        Cerrar
+      </button>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/ver_ticket_venta.js') }}"></script>
+  </body>
+</html>

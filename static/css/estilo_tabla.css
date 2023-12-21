@@ -1,0 +1,171 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;500&display=swap");
+thead,
+tfoot {
+  background-color: #0d6efd;
+  color: #fff;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.7rem;
+}
+/* thead th,
+tfoot th { */
+/* font-family: 'Sofia Sans Extra Condensed', sans-serif; */
+/* font-size: 0.9rem; */
+/* } */
+th[scope="row"] {
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+table {
+  border-collapse: collapse;
+  border: 2px solid rgb(200, 200, 200);
+  letter-spacing: 1px;
+  font-family: "Montserrat", sans-serif;
+  /* font-size: 0.8rem; */
+}
+
+td,
+th {
+  border: 1px solid rgb(190, 190, 190);
+  padding: 5px 10px;
+}
+
+td {
+  /* text-align: left; */
+  font-size: 0.7em;
+}
+td.idT,
+th.idT {
+  width: 5%;
+  max-width: 5%;
+  word-break: break-all;
+  text-align: center;
+}
+td.prodSAT,
+th.prodSAT {
+  width: 8%;
+  max-width: 8%;
+  word-break: break-all;
+  text-align: left;
+}
+td.codigo,
+th.codigo {
+  width: 10%;
+  max-width: 10%;
+  word-break: break-all;
+  text-align: left;
+}
+td.descrip,
+th.descrip {
+  width: 25%;
+  max-width: 25%;
+  word-break: break-all;
+  text-align: left;
+}
+td.codprov,
+th.codprov {
+  width: 10%;
+  max-width: 10%;
+  word-break: break-all;
+  text-align: left;
+}
+td.um,
+th.um {
+  width: 7%;
+  max-width: 7%;
+  word-break: break-all;
+  text-align: center;
+}
+td.pventa,
+th.pventa {
+  width: 6%;
+  max-width: 6%;
+  word-break: break-all;
+  text-align: right;
+}
+td.stock,
+th.stock {
+  width: 6%;
+  max-width: 6%;
+  word-break: break-all;
+  text-align: right;
+}
+td.accion,
+th.accion {
+  width: 13%;
+  max-width: 13%;
+  word-break: break-all;
+  text-align: left;
+}
+/* CREA MARGEN SOMBREADO AL CONTENEDOR QUE MANTIENE EL DATATABLE */
+.container {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  box-sizing: border-box;
+  box-shadow: 0 0 20px 0 rgba(48, 21, 199, 0.3);
+  margin-bottom: auto;
+}
+
+/* CREA MARGEN SUPERIOR A LOS BOTONES DE LA TABLA DE EXPORTACION */
+div.dt-buttons {
+  padding-top: 1em;
+}
+/* CREA MARGEN INFERIOR A LOS BOTONES DE NAVEGACION  */
+div.dataTables_paginate {
+  padding-bottom: 1em;
+}
+/* DA FORMATO AL LABEL DE SEARCH QUE NO CUENTA CON ID */
+div.dataTables_wrapper div.dataTables_filter label {
+  color: #0d6efd;
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+/* DA FORMATO AL LABEL DE LA SEPARACION DE FILAS(MOSTRAR) */
+div.dataTables_wrapper div.dataTables_length label {
+  color: #0d6efd;
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+/* DA FORMATO AL LABEL DE MOSTRANDO ENTRADAS */
+div.dataTables_wrapper div.dataTables_info {
+  color: #0d6efd;
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+/* div#TablaMostrador_length{
+  position:absolute; top:1px; left:0;
+} */
+/* DA FORMATO AL SELECT DE MOSTRAR FILAS */
+div.dataTables_wrapper div.dataTables_length .form-select {
+  outline: 1px solid #0d6efd;
+  box-shadow: 3px 3px 5px #0d9fff;
+  font-size: 1.2rem;
+  background-color: #fff;
+  color: #0d6efd;
+}
+
+/* FORMATO AL INPUT SEARCH QUE NO CUENTA CON ID NI NAME */
+input[type="search"] {
+  width: 300px;
+  margin-bottom: 7px;
+  margin-top: 15px;
+  font-size: 20px;
+  border: 2;
+  outline: 1px solid black;
+  box-shadow: 3px 3px 5px #0d6efd;
+  padding: 5px 9px;
+  background-color: #fff;
+  color: #0d6efd;
+}
+/* DA FORMATO AL FOCUS DEL INPUT SEARCH */
+input[type="search"]:focus {
+  /* color: black; */
+  outline: 1px solid #0d6efd;
+  box-shadow: 0 0 5px 5px #0d9fff;
+}
+/* LE DA FORMATO SOMBREADO AL BOTON DE AGREGAR */
+.botoncito {
+  box-shadow: 3px 3px 5px #0d6efd;
+}

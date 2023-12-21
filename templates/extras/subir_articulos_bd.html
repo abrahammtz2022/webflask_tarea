@@ -1,0 +1,75 @@
+{% include './cabecera_index.html' %}
+
+<!-- {% block title %} Listado de Usuarios {% endblock %} -->
+
+<div class="container-fluid">
+    <div class="row">
+        {% with messages = get_flashed_messages(with_categories=True) %}
+
+        {% if messages %}
+        <br />
+        {% for category, message in messages %}
+        {% if category == 'warning' %}
+        <div class="alert alert-danger alert-dismissible fase show" role="alert">
+            <strong style="font-size: 14px;">{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                <!-- <span aria-hidden="true">&times;</span> -->
+            </button>
+        </div>
+        <!-- <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Informacion del Sistema: </strong> You should check in on some of those fields below.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div> -->
+        {% else %}
+        <div class="alert alert-info alert-dismissible fase show" role="alert">
+            <strong style="font-size: 14px;">{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                <!-- <span aria-hidden="true">&times;</span> -->
+            </button>
+        </div>
+        {% endif %}
+
+        {% endfor %}
+        {% endif %}
+
+        {% endwith %}
+    </div>
+   
+    <div class="row mt-2">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <div class="card">
+                <h5 class="card-header text-center text-white bg-success"> <i class="bi bi-file-earmark-spreadsheet"></i> Importar Catalogo de Articulos a BD</h5>
+                <div class="card-body">
+                    <h5 class="card-title">Informacion:</h5>
+                    <p class="card-text">Importa los Articulos de otra Base de Datos en formato Excel a 
+                            esta base de datos actual </p>
+                    <div class="row">
+                        <!-- <div class="col-md-8">
+                            <a href="http://omawww.sat.gob.mx/tramitesyservicios/Paginas/anexo_20.htm" class="card-link fst-italic text-decoration-none" target="_blank" rel="noopener noreferrer">Pagina SAT Formato de factura (Anexo 20)</a>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <a href="http://omawww.sat.gob.mx/tramitesyservicios/Paginas/documentos/catCFDI_V_4_19102023.xls" class="btn btn-primary  mb-4" target="_blank" rel="noopener noreferrer"> <i class="bi bi-cloud-download"></i>  Descargar Archivo</a>                        
+                        </div> -->
+                    </div>                    
+                    
+                    <form method="post" action="/subir_data_csv/procesarV3" id="sample_form"
+                        enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="input-group">
+                            <input type="file" class="form-control" name="inputSubir" id="inputSubir"
+                                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                            <button class="btn btn-danger" type="submit" id="save" name="submit"><i
+                                    class="bi bi-check-circle-fill"></i> Procesar Excel</button>
+                        </div>
+                    </form>
+                </div>
+                
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+
+    </div>
+</div>
+
+{% include './pie_index.html' %}

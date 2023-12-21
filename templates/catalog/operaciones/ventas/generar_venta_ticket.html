@@ -1,0 +1,246 @@
+{% include './cabecera_index.html' %} {% block estiloCSS %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/estilo_formulario_ventas.css') }}"
+/>
+{% endblock %}
+
+<div class="container-fluid">
+  <div id="fondo" class="cargando" style="display: block">
+    <strong class="leyenda text-white pt-4"
+      >Espere un momento por favor...</strong
+    >
+    <div id="bloquea" class="loader" style="display: block"></div>
+  </div>
+  <section class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+      <div class="contenedor_venta">
+        <div class="card">
+          <div class="card-header text-center bg-primary text-white">
+            <h6>Generar Venta por Ticket</h6>
+          </div>
+          <div class="card-body">
+            <form id="formVentaEncabezado" class="row">
+              <div class="row separador_div">
+                <div class="col-md-2 separador_input">
+                  <label for="txtVentaFolio" class="form-label fw-bolder"
+                    >Folio</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control text-center fw-bold"
+                    name="txtVentaFolio"
+                    id="txtVentaFolio"
+                    autocomplete="off"
+                  />
+                </div>
+                <div class="col-md-2 separador_input">
+                  <label for="txtVentaFecha" class="form-label fw-bolder"
+                    >Fecha</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control text-center fw-bold"
+                    name="txtVentaFecha"
+                    id="txtVentaFecha"
+                    autocomplete="off"
+                  />
+                </div>
+                <div class="col-md-4 separador_input">
+                  <label for="txtVentaSucursal" class="form-label fw-bolder"
+                    >Sucursal</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control fw-bold"
+                    name="txtVentaSucursal"
+                    id="txtVentaSucursal"
+                    value="{{ current_user.UC_SUCURSAL }}"
+                    autocomplete="off"
+                  />
+                </div>
+                <div class="col-md-4 separador_input">
+                  <label for="txtVentaVendedor" class="form-label fw-bolder"
+                    >Vendedor</label
+                  >
+                  <select
+                    class="form-select"
+                    id="txtVentaVendedor"
+                    name="txtVentaVendedor"
+                  ></select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <input
+                    type="hidden"
+                    name="txtVentaNombrePC"
+                    id="txtVentaNombrePC"
+                    value="{{ nombrepc }}"
+                  />
+                  <input
+                    type="hidden"
+                    name="txtVentaIP"
+                    id="txtVentaIP"
+                    value="{{ aip }}"
+                  />
+                  <input
+                    type="hidden"
+                    name="txtVentaComodin"
+                    id="txtVentaComodin"
+                    value=""
+                  />
+                </div>
+              </div>
+              <div class="row separador_div pt-1">
+                <div class="col-md-2 separador_input">
+                  <label class="text-center fw-bolder">Requiere Factura:</label>
+                  <div class="separador_div pt-2">
+                    <input
+                      class=""
+                      type="radio"
+                      id="optVentaSI"
+                      name="factura"
+                    />
+                    <label for="optVentaSI">SI</label>
+
+                    <input
+                      class="ms-2"
+                      type="radio"
+                      id="optVentaNO"
+                      name="factura"
+                      checked
+                    />
+                    <label for="optVentaNO">NO</label>
+                  </div>
+                </div>
+                <div class="col-md-10 separador_input ps-2">
+                  <label for="txtVentaComentario" class="fw-bolder pb-1"
+                    >Comentario</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="txtVentaComentario"
+                    id="txtVentaComentario"
+                    placeholder="Ingrese algun dato extra(vehiculo, taller, servicio,etc)..."
+                    autocomplete="off"
+                  />
+                </div>
+              </div>
+              <hr class="mt-2 fw-bold" />
+              <div
+                class="col-md-12 d-grid gap-2 d-md-flex justify-content-md-center separador_div"
+              >
+                <a
+                  name=""
+                  id=""
+                  class="btn btn-danger"
+                  href="javascript:window.location.replace('/extras/visor3')"
+                  role="button"
+                  ><i class="bi bi-chevron-double-left"></i> Cancelar</a
+                >
+                <button
+                  type="button"
+                  name="submit"
+                  id="submit"
+                  class="btn btn-success"
+                >
+                  <i class="bi bi-floppy"></i> Guardar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-1"></div>
+  </section>
+
+  <section class="row pt-2">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+      <div class="contenedor_venta">
+        <div class="card">
+          <div class="card-body">
+            <form class="row" id="formVentaDetalle">
+              <div class="col-md-1 separador_input pt-2">
+                <input
+                  type="text"
+                  class="form-control text-center"
+                  name="txtVentaCantidad"
+                  id="txtVentaCantidad"
+                  value="1"
+                  autocomplete="off"
+                />
+              </div>
+              <div class="col-md-10 separador_input pt-2">
+                <input
+                  type="text"
+                  class="form-control"
+                  name="txtVentaCodigoEscanea"
+                  id="txtVentaCodigoEscanea"
+                  placeholder="Ingrese Clave, Numero o Nombre de Producto, y/o Escanea el Codigo..."
+                  autocomplete="off"
+                />
+              </div>
+              <div class="col-md-1 separador_input ps-2">
+                <button type="button" id="btnAgregar" class="btn btn-success">
+                  <span><i class="bi bi-cart-plus-fill"></i></span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-1"></div>
+  </section>
+  <section class="row pt-2">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+      <div class="contenedor_venta">
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="table-responsive-md">
+                  <table
+                    id="TablaVentaMostrador"
+                    class="table table-striped display"
+                    style="width: 100%"
+                  >
+                    <thead>
+                      <tr>
+                        <th>Cant.</th>
+                        <th>Codigo</th>
+                        <th>Descripcion</th>
+                        <th>Precio</th>
+                        <th>Importe</th>
+                        <th>Opcion</th>
+                      </tr>
+                    </thead>
+                    <tbody id="cuerpoTabla"></tbody>
+                    <tfoot>
+                      <tr>
+                        <td colspan="4" class="text-end fw-bolder">Total:</td>
+                        <td id="SumaTotal" class="derecha"></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-1"></div>
+  </section>
+</div>
+
+{% include './pie_index.html' %} {% block jscript %}
+<script src="{{ url_for('static', filename='js/busca_ventas_mostrador.js') }}"></script>
+<!-- <script src="{{ url_for('static', filename='js/TableCell_cargador.js') }}"></script> -->
+{% endblock %}
