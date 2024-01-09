@@ -1,0 +1,20 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;500&display=swap");
+#TablaKardex {
+    border-collapse: collapse;
+    /* border: 2px solid rgb(200, 200, 200); */
+    border-radius: 10px 10px 0 0;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    letter-spacing: 1px;
+    font-family: "Montserrat", sans-serif;
+    margin: 25px 0;
+    font-size: 1em;
+    animation: fadeIn 1s ease-in-out;
+    /* table-layout: auto; */
+    width: 85%;
+  }
+  #TablaKardex thead tr {
+    background-color: #fd290d;
+    color: #fff;
+    font-size: 0.6em;
+  }

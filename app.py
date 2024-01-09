@@ -28,8 +28,16 @@ locale.setlocale(locale.LC_ALL, '')
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-csrf = CSRFProtect()
-db=MySQL(app)
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = ''
+app.config['MYSQL_DB'] = 'pvwebcontrol'
+app.config['MYSQL_CHARSET'] = 'utf8mb4'
+db = MySQL(app)
+app.config['SECRET_KEY'] = "BB!1w8NAt1T^%kvhUI*S^"
+app.config['WTF_CSRF_SECRET_KEY'] = "BB!1w8NAt1T^%kvhUI*S^"
+csrf = CSRFProtect(app)
+
 login_manager_app=LoginManager(app)
 
 
@@ -58,12 +66,12 @@ def login():
                 return redirect(url_for('home'))
             else:
                 flash("Password incorrecto...",'warning')
-                return render_template('auth/login.html')
+                return render_template('auth/login_v2.html')
         else:
             flash("Usuario no encontrado...",'warning')
-            return render_template('auth/login.html')
+            return render_template('auth/login_v2.html')
     else:
-        return render_template('auth/login.html')
+        return render_template('auth/login_v2.html')
 
 @app.route('/logout')
 @login_required
@@ -83,7 +91,7 @@ def home():
 def c_productosv_json():
     
     cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("SELECT * FROM ucat_productos limit 9000")
+    cursor.execute("SELECT * FROM ucat_productos limit 1000")
     productos = cursor.fetchall()
 
     data = []
@@ -110,7 +118,37 @@ def c_productosv_json():
 
     return jsonify(data)
 
+@app.route('/catalogo/productosv_jsonv2',methods=['GET','POST'])
+@login_required
+def c_productosv_jsonv2():
+    
+    cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT id,cp_cod_prod_serv_sat,cp_codigo,cp_descripcion,cp_codigo_prov,cp_um,cp_precio_venta,cp_existencia FROM ucat_productos ")
+    productos = cursor.fetchall()
+
+    data = []
+    contenido = {}
+    for producto in productos:
+        contenido = {
+            'id':producto['id'],
+            'prodserv':producto['cp_cod_prod_serv_sat'],
+            'codigo':producto['cp_codigo'],
+            'descripcion':producto['cp_descripcion'],
+            'codprov':producto['cp_codigo_prov'],
+            'um':producto['cp_um'],
+            'pventa':locale.currency(producto['cp_precio_venta'],symbol=True, grouping=True),
+            'existencia':locale.currency(producto['cp_existencia'],symbol=False, grouping=True),
+        }
+        data.append(contenido)
+        contenido = {}
+    #print(data)
+    cursor.close()
+    #db.connection.close()
+
+    return jsonify({'data':data})
+
 @app.route("/catalogo/productosv2",methods=["POST","GET"])
+@login_required
 def ajaxfile():
     try:
         #conn = mysql.connect()
@@ -165,6 +203,7 @@ def ajaxfile():
                 'iTotalDisplayRecords': totalRecordwithFilter,
                 'aaData': data,
             }
+            print(response)
             return jsonify(response)
     except Exception as e:
         print(e)
@@ -173,7 +212,7 @@ def ajaxfile():
         #conn.close()
 
 @app.route('/catalogo/productos_mostrador_json', methods=['GET'])
-#@login_required
+@login_required
 def c_productos_mostrador_json():
     query = request.args.get('query')
     print(query)
@@ -405,6 +444,58 @@ def c_oper_crea_kardex():
     
     return jsonify(result=msg)
 
+@app.route('/operaciones/muestra_kardex_codigo')
+@login_required
+def c_oper_muuestra_kardex_codigo():
+    clave = request.args.get('clave','', type=str)
+    #print(clave)
+
+    cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+    new_sql = """SELECT id as ID,DATE(ukp_fecha) as FECHA,ukp_codigo as CODIGO,ukp_estado as ESTADO,ukp_tipo as TIPO,ukp_folio AS FOLIO,
+                case when (ukp_tipo) = 'V' then 'Ventas(SALIDAS)'
+                     when (ukp_tipo) = 'C' then 'Compras(ENTRADAS)'
+                     END AS MOVIMIENTOS,
+                (case when ukp_tipo='C' then ukp_cant else 0 end ) AS ENT,
+                (case when ukp_tipo='V' then ukp_cant else 0 end ) AS SAL,
+                (case when ukp_tipo='C' then ukp_cant else 0 end ) -
+                (case when ukp_tipo='V' then ukp_cant else 0 end ) AS EXIST,
+                ukp_costo AS COSTO,
+                (case when ukp_tipo='C' then ukp_cant*ukp_costo else 0 end ) AS MOV_ENT,
+                (case when ukp_tipo='V' then ukp_cant*ukp_costo else 0 end  ) AS MOV_SAL,
+                '0.00' AS MOV_INV
+                FROM upro_kardex_producto
+                WHERE ukp_codigo= '{0}'
+                order by ukp_fecha""".format(clave)
+    #print(new_sql)
+    cursor.execute(new_sql)
+    kardex = cursor.fetchall()
+
+    data = []
+    contenido = {}
+    for producto in kardex:
+        contenido = {
+            'ID':producto['ID'],
+            'FECHA': producto['FECHA'],
+            'CODIGO':producto['CODIGO'],
+            'TIPO':producto['TIPO'],
+            'ESTADO':producto['ESTADO'],
+            'FOLIO':producto['FOLIO'],
+            'MOVIMIENTOS':producto['MOVIMIENTOS'],
+            'ENT':producto['ENT'],
+            'SAL':producto['SAL'],
+            'EXIST':producto['EXIST'],
+            'COSTO':producto['COSTO'],
+            'MOV_ENT':producto['MOV_ENT'],
+            'MOV_SAL':producto['MOV_SAL'],
+            'MOV_INV':producto['MOV_INV'],
+        }
+        data.append(contenido)
+        contenido = {}
+    #print(data)
+    cursor.close()
+    #db.connection.close()
+
+    return jsonify({'data':data})
 
 @app.route('/catalogo/venta_mostrador_encabezado')
 @login_required
@@ -532,9 +623,10 @@ def c_clientesv_json():
 @app.route('/catalogo/productos')
 @login_required
 def c_productos():
-    return render_template('catalog/articulos/cat_product.html')
+    return render_template('catalog/articulos/cat_product_v2.html')
 
 @app.route('/catalogo/productos/agregar_ver')
+@login_required
 def c_productos_agrega_ver():
     cursor = db.connection.cursor()
     cursor.execute("SELECT * FROM ucat_um")
@@ -551,6 +643,7 @@ def c_productos_agrega_ver():
     #return render_template('ejemplos.html')
 
 @app.route('/catalogo/productos/agregar', methods=['POST','GET'])
+@login_required
 def c_productos_agregar():
     if request.method == 'POST':
         p_codigo = request.form['txtCodigo'].upper()
@@ -677,6 +770,7 @@ def c_productos_modificar(id):
 @app.route('/catalogo/productos/eliminar/<id>', methods=['POST','GET'])
 @login_required
 def c_productos_eliminar(id):
+    
     sql = "DELETE FROM ucat_productos WHERE cp_codigo='{0}'".format(id)
     cursor = db.connection.cursor()
     cursor.execute(sql)
@@ -691,11 +785,36 @@ def c_productos_eliminar(id):
         flash("Ocurrio una error al eliminar el Producto",'warning')
         return redirect(url_for('c_productos'))
 
+@app.route('/catalogo/productos/eliminarV2')
+@login_required
+def c_productos_eliminarV2():
+    codigo = request.args.get('codigo','', type=str)
+    
+    print(codigo)
+    sql = "DELETE FROM ucat_productos WHERE cp_codigo='{0}'".format(codigo)
+    cursor = db.connection.cursor()
+    cursor.execute(sql)
+    db.connection.commit()
+    confirma = cursor.rowcount
+    cursor.close()
+    #confirma=1
+    msg=''
+    if confirma == 1:
+        msg='Eliminado'
+        #flash("Se ha eliminado el Cliente Correctamente", 'success')
+        #return redirect(url_for('c_clientes'))
+    else:
+        msg='Cancelado'
+        #flash("Ocurrio una error al eliminar el Cliente",'warning')
+        #return redirect(url_for('c_clientes'))
+    print(msg)
+    return jsonify(result=msg)
 
 #00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 #                       AREA DE CLIENTES C-R-U-D
 #00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 @app.route('/catalog/clientes/codigopostal', methods=['GET'])
+@login_required
 def c_clientes_busca():
     query = request.args.get('query')
     #print('Obteniendo desde el input de la pagina:' + query)
@@ -747,11 +866,13 @@ def c_clientes():
     return render_template('catalog/clientes/cat_clientes.html')
 
 @app.route('/catalog/clientes/agregar_capturar')
+@login_required
 def c_clientes_agregar_capturar():
     #return render_template('catalog/prueba.html')
     return render_template('catalog/clientes/cat_clientes_add.html')
 
 @app.route('/catalogo/clientes/agregar_guardar')
+@login_required
 def c_clientes_agregar_guardar():
     rfc = request.args.get('rfc','', type=str)
     razon = request.args.get('razon','', type=str)
@@ -790,6 +911,7 @@ def c_clientes_agregar_guardar():
     # return jsonify(msj)
 
 @app.route('/catalogo/clientes/mostrar/<id>', methods=['POST','GET'])
+@login_required
 def c_clientes_mostrar(id):
     cursor_cte = db.connection.cursor()
     sql ="""SELECT * FROM ucat_clientes WHERE cli_rfc='{0}'""".format(id)
@@ -810,6 +932,7 @@ def c_clientes_mostrar(id):
     return render_template('catalog/clientes/cat_clientes_edit.html', cliente_edit=cliente[0], asentamientos=poblados)
 
 @app.route('/catalogo/clientes/modificar')
+@login_required
 def c_clientes_modificar():
     rfc = request.args.get('rfc','', type=str)
     razon = request.args.get('razon','', type=str)
@@ -1191,6 +1314,7 @@ def oper_ventas_genera_agrega_detalle():
     return jsonify(result=msg)
 
 @app.route('/operaciones/ventas/genera_venta_ticket/mostrar_ticket/<id>', methods=['GET','POST'])
+@login_required
 def oper_ventas_genera_impresion(id):
     cursor=db.connection.cursor()
     sql ="""SELECT * FROM upro_ventas_detallado WHERE uvt_det_folio='{0}'""".format(id)
@@ -1243,31 +1367,38 @@ def oper_ventas_genera_impresion(id):
 #          FINALIZA EL PROCESO CRUD DE CATALOGO DE USUARIOS
 # 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 @app.route('/subir_prodservsat')
+@login_required
 def subir_prodservsat():
     return render_template('/extras/subir_csv_sat_prodserv.html')
 
 @app.route('/subir_umsat')
+@login_required
 def subir_umsat():
     return render_template('/extras/subir_csv_sat_um.html')
 
 @app.route('/importar_articulos')
+@login_required
 def importar_articulos():
     return render_template('/extras/subir_articulos_bd.html')
 
 @app.route('/importar_codigopostal')
+@login_required
 def importar_codigopostal():
     return render_template('extras/subir_codpostal_bd.html')
 
 @app.route('/importar_regimenfiscal')
+@login_required
 def importar_regimenfiscal():
     return render_template('extras/subir_regimenfiscal.html')
 
 @app.route('/importar_ubicaciones')
+@login_required
 def importar_ubicaciones():
     return render_template('extras/subir_ubicaciones.html')
 # 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 #PROCESO PARA IMPORTAR PRODUCTOS Y SERVICIOS SAT A LA BASE DE DATOS
 @app.route('/subir_data_csv/procesar',methods=['POST','GET'])
+@login_required
 def subir_data_csv_procesar():
     if request.method == 'POST':
         archivo = request.files['inputSubir']
@@ -1276,48 +1407,59 @@ def subir_data_csv_procesar():
             flash('No ha seleccionado ningun archivo de Excel','warning')
             return redirect(url_for('subir_prodservsat'))
         else:
-            archivo_path = os.path.join(app.config['UPLOAD_FOLDER'],archivo.filename)
-            archivo.save(archivo_path)
-            flash('Se ha subido el archivo Excel para procesar...','success')
-            #print(archivo_path)
-            #revisar la pagina para agregar parametros
-            # https://www.digitalocean.com/community/tutorials/pandas-read_excel-reading-excel-file-in-python
-            lectura = pd.read_excel(archivo_path,sheet_name='c_ClaveProdServ', usecols=['c_ClaveProdServ', 'Descripción'])
-            flash('Realizando lectura de Excel','success')
-            #print(lectura)
-            #flash('Leyendo el archivo','success')
-            lectura.fillna('', inplace=True)
-            data=[]
-            for i,row in lectura.iterrows():
-                n_codigo =row['c_ClaveProdServ']
-                n_descripcion=row['Descripción']
-                data.append((n_codigo,n_descripcion))
-
-                n_codigo=''
-                n_descripcion=''
-            
-            flash('Se ha procesado el archivo de Excel pasando a Data, Empezando a subir....','success')
-            
-            sql ="INSERT INTO ucat_productos_serv_sat (ups_claveprodserv, ups_descripcion) VALUES( %s, %s)"
-            
-            cursor= db.connection.cursor()
-            cursor.executemany(sql,data)
-
-            if(len(data) == cursor.rowcount):
-                db.connection.commit()
-                flash('Se han ingresado ' + str(len(data)) + '  Codigos Postales a la Base de Datos.', 'success')
+            #print(os.path.dirname(__file__))
+            direccion = os.path.dirname(os.path.abspath(__file__))
+            direc_join = os.path.join(direccion, app.config['UPLOAD_FOLDER'], archivo.filename)
+            #print('direccion base',direc_join)
+            #archivo_path = os.path.join(app.config['UPLOAD_FOLDER'],archivo.filename)
+            #archivo.save(archivo_path)
+            isFile = os.path.isfile(direc_join)
+            if not isFile:
+                archivo.save(direc_join)
+                flash('Se ha subido el archivo Excel para procesar...','success')
             else:
-                db.connection.rollback()
-                flash('Ocurrio un problema al ingresar','warning')
+                flash('El archivo ya existe...')
+                ## print(archivo_path)
+                ## revisar la pagina para agregar parametros
+                ## https://www.digitalocean.com/community/tutorials/pandas-read_excel-reading-excel-file-in-python
+                lectura = pd.read_excel(direc_join,sheet_name='c_ClaveProdServ', usecols=['c_ClaveProdServ', 'Descripción'])
+                flash('Realizando lectura de Excel','success')
+                ##print(lectura)
+                ##flash('Leyendo el archivo','success')
+                lectura.fillna('', inplace=True)
+                data=[]
+                for i,row in lectura.iterrows():
+                   n_codigo =row['c_ClaveProdServ']
+                   n_descripcion=row['Descripción']
+                   data.append((n_codigo,n_descripcion))
+
+                   n_codigo=''
+                   n_descripcion=''
             
-            cursor.close()
-            flash('Se ha ingresado correctamente el archivo de excel a la Base de Datos','success')
+                flash('Se ha procesado el archivo de Excel pasando a Data, Empezando a subir....','success')
+                flash('Direccion de almacenamiento: ' + direc_join)
+                
+                sql ="INSERT INTO ucat_productos_serv_sat (ups_claveprodserv, ups_descripcion) VALUES( %s, %s)"
+                
+                cursor= db.connection.cursor()
+                cursor.executemany(sql,data)
+
+                if(len(data) == cursor.rowcount):
+                    db.connection.commit()
+                    flash('Se han ingresado ' + str(len(data)) + '  Codigos Postales a la Base de Datos.', 'success')
+                else:
+                    db.connection.rollback()
+                    flash('Ocurrio un problema al ingresar','warning')
+                
+                cursor.close()
+                flash('Se ha ingresado correctamente el archivo de excel a la Base de Datos','success')
 
             #return redirect(url_for('subir_data_csv'))        
     return redirect(url_for('subir_prodservsat'))
 
 #PROCESO PARA IMPORTAR UNIDAD DE MEDIDA SAT A LA BASE DE DATOS
 @app.route('/subir_data_csv/procesarV2',methods=['POST','GET'])
+@login_required
 def subir_data_csv_procesarV2():
     if request.method == 'POST':
         archivo = request.files['inputSubir']
@@ -1326,50 +1468,61 @@ def subir_data_csv_procesarV2():
             flash('No ha seleccionado ningun archivo de Excel','warning')
             return redirect(url_for('subir_umsat'))
         else:
-            archivo_path = os.path.join(app.config['UPLOAD_FOLDER'],archivo.filename)
-            archivo.save(archivo_path)
-            flash('Se ha subido el archivo Excel para procesar...','success')
-            #print(archivo_path)
-            #revisar la pagina para agregar parametros
-            # https://www.digitalocean.com/community/tutorials/pandas-read_excel-reading-excel-file-in-python
-            lectura = pd.read_excel(archivo_path,sheet_name='c_ClaveUnidad', usecols=['c_ClaveUnidad', 'Nombre'])
-            flash('Realizando lectura de Excel','success')
-            #print(lectura)
-            #flash('Leyendo el archivo','success')
-            lectura.fillna('', inplace=True)
-            data=[]
-            for i,row in lectura.iterrows():
-                u_clave=row['c_ClaveUnidad']
-                u_nombre = row['Nombre']
-                data.append((u_clave,u_nombre))
-
-                u_clave=''
-                u_nombre=''
-
-            flash('Se ha procesado el archivo de Excel pasando a Data, Empezando a subir....','success')
-
-
-            sql ="INSERT INTO ucat_um_sat (us_clave, us_nombre_clave) VALUES( %s, %s)"
-            
-            cursor= db.connection.cursor()
-            cursor.executemany(sql, data)
-
-            if(len(data) == cursor.rowcount):
-                db.connection.commit()
-                flash('Se han ingresado ' + str(len(data)) + '  Unidades de Medida SAT a la Base de Datos.', 'success')
+            direccion = os.path.dirname(os.path.abspath(__file__))
+            direc_join = os.path.join(direccion, app.config['UPLOAD_FOLDER'], archivo.filename)
+            #print('direccion base',direc_join)
+            #archivo_path = os.path.join(app.config['UPLOAD_FOLDER'],archivo.filename)
+            #archivo.save(archivo_path)
+            isFile = os.path.isfile(direc_join)
+            if not isFile:
+                archivo.save(direc_join)
+                flash('Se ha subido el archivo Excel para procesar...','success')
             else:
-                db.connection.rollback()
-                flash('Ocurrio un problema al ingresar','warning')
+                flash('El archivo ya existe...')
+                #archivo_path = os.path.join(app.config['UPLOAD_FOLDER'],archivo.filename)
+                #archivo.save(archivo_path)
+                flash('Se ha subido el archivo Excel para procesar...','success')
+                #print(archivo_path)
+                #revisar la pagina para agregar parametros
+                # https://www.digitalocean.com/community/tutorials/pandas-read_excel-reading-excel-file-in-python
+                lectura = pd.read_excel(direc_join,sheet_name='c_ClaveUnidad', usecols=['c_ClaveUnidad', 'Nombre'])
+                flash('Realizando lectura de Excel','success')
+                #print(lectura)
+                #flash('Leyendo el archivo','success')
+                lectura.fillna('', inplace=True)
+                data=[]
+                for i,row in lectura.iterrows():
+                    u_clave=row['c_ClaveUnidad']
+                    u_nombre = row['Nombre']
+                    data.append((u_clave,u_nombre))
 
-            cursor.close()
+                    u_clave=''
+                    u_nombre=''
 
-            flash('Se ha ingresado correctamente el archivo de excel a la Base de Datos','success')
+                flash('Se ha procesado el archivo de Excel pasando a Data, Empezando a subir....','success')
+
+                sql ="INSERT INTO ucat_um_sat (us_clave, us_nombre_clave) VALUES( %s, %s)"
+                
+                cursor= db.connection.cursor()
+                cursor.executemany(sql, data)
+
+                if(len(data) == cursor.rowcount):
+                    db.connection.commit()
+                    flash('Se han ingresado ' + str(len(data)) + '  Unidades de Medida SAT a la Base de Datos.', 'success')
+                else:
+                    db.connection.rollback()
+                    flash('Ocurrio un problema al ingresar','warning')
+
+                cursor.close()
+
+                flash('Se ha ingresado correctamente el archivo de excel a la Base de Datos','success')
 
             #return redirect(url_for('subir_data_csv'))        
     return redirect(url_for('subir_umsat'))
 
 #PROCESO PARA IMPORTAR CATALOGO DE ARTICULOS A LA BASE DE DATOS
 @app.route('/subir_data_csv/procesarV3',methods=['POST','GET'])
+@login_required
 def subir_data_csv_procesarV3():
     if request.method == 'POST':
         archivo = request.files['inputSubir']
@@ -1378,64 +1531,74 @@ def subir_data_csv_procesarV3():
             flash('No ha seleccionado ningun archivo de Excel','warning')
             return redirect(url_for('importar_articulos'))
         else:
-            archivo_path = os.path.join(app.config['UPLOAD_FOLDER'],archivo.filename)
-            archivo.save(archivo_path)
-            flash('Se ha subido el archivo Excel para procesar...','success')
-            #print(archivo_path)
-            #revisar la pagina para agregar parametros
-            # https://www.digitalocean.com/community/tutorials/pandas-read_excel-reading-excel-file-in-python
-            lectura = pd.read_excel(archivo_path,sheet_name='Articulos', usecols=['ART_CLAVE', 'ART_DESCRIPCION','ART_UM_CLAVE','ART_EXISTENCIA','ART_PRECIO_VENTA','ART_PRECIO_PROMEDIO','ART_DESCRIPCION_CORTA','ART_MARCA_PRODUCTO','ART_SAT_CLAVE_PYS','ART_SAT_CLAVE_UNIDAD'])
-            flash('Realizando lectura de Excel','success')
-            #print(lectura)
-            #flash('Leyendo el archivo','success')
-            lectura.fillna('', inplace=True)
-            data=[]
-            for i,row in lectura.iterrows():
-                p_codigo = row['ART_CLAVE']
-                p_descripcion = row['ART_DESCRIPCION']
-                p_um = row['ART_UM_CLAVE']
-                p_existencia = row['ART_EXISTENCIA']
-                p_pventa = row['ART_PRECIO_VENTA']
-                p_pcosto = row['ART_PRECIO_PROMEDIO']
-                p_cod_prov = row['ART_DESCRIPCION_CORTA']
-                p_marca = row['ART_MARCA_PRODUCTO']
-                clave = row['ART_SAT_CLAVE_PYS']
-                uclave = row['ART_SAT_CLAVE_UNIDAD']
-                data.append((p_codigo, p_descripcion, p_um, p_existencia, p_pventa, p_pcosto, p_cod_prov, p_marca, clave, uclave))
-
-                p_codigo=''
-                p_descripcion=''
-                p_um=''
-                p_exiestencia=''
-                p_pventa=''
-                p_pcosto=''
-                p_cod_prov=''
-                p_marca=''
-                clave=''
-                uclave=''
-            flash('Se ha procesado el archivo de Excel pasando a Data, Empezando a subir....','success')
-                
-            sql ="INSERT INTO ucat_productos (cp_codigo, cp_descripcion,cp_um, cp_existencia, cp_precio_venta, cp_precio_costo,cp_codigo_prov, cp_marca, cp_cod_prod_serv_sat, cp_cod_um_sat) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-
-            cursor= db.connection.cursor()
-            cursor.executemany(sql, data)
-
-            if (len(data) == cursor.rowcount):
-                db.connection.commit()
-                flash('Se han ingresado ' + str(len(data)) + '  Articulos/Productos a la Base de Datos.', 'success')
+            direccion = os.path.dirname(os.path.abspath(__file__))
+            direc_join = os.path.join(direccion, app.config['UPLOAD_FOLDER'], archivo.filename)
+            #print('direccion base',direc_join)
+            #archivo_path = os.path.join(app.config['UPLOAD_FOLDER'],archivo.filename)
+            #archivo.save(archivo_path)
+            isFile = os.path.isfile(direc_join)
+            if not isFile:
+                archivo.save(direc_join)
+                flash('Se ha subido el archivo Excel para procesar...','success')
             else:
-                db.connection.commit()
-                flash('Ocurrio un problema al ingresar','warning')
+                flash('El archivo ya existe...')
+                #archivo_path = os.path.join(app.config['UPLOAD_FOLDER'],archivo.filename)
+                #archivo.save(archivo_path)
+                flash('Se ha subido el archivo Excel para procesar...','success')
+                #print(archivo_path)
+                #revisar la pagina para agregar parametros
+                # https://www.digitalocean.com/community/tutorials/pandas-read_excel-reading-excel-file-in-python
+                lectura = pd.read_excel(direc_join,sheet_name='Articulos', usecols=['ART_CLAVE', 'ART_DESCRIPCION','ART_UM_CLAVE','ART_EXISTENCIA','ART_PRECIO_VENTA','ART_PRECIO_PROMEDIO','ART_DESCRIPCION_CORTA','ART_MARCA_PRODUCTO','ART_SAT_CLAVE_PYS','ART_SAT_CLAVE_UNIDAD'])
+                flash('Realizando lectura de Excel','success')
+                #print(lectura)
+                #flash('Leyendo el archivo','success')
+                lectura.fillna('', inplace=True)
+                data=[]
+                for i,row in lectura.iterrows():
+                    p_codigo = row['ART_CLAVE']
+                    p_descripcion = row['ART_DESCRIPCION']
+                    p_um = row['ART_UM_CLAVE']
+                    p_existencia = row['ART_EXISTENCIA']
+                    p_pventa = row['ART_PRECIO_VENTA']
+                    p_pcosto = row['ART_PRECIO_PROMEDIO']
+                    p_cod_prov = row['ART_DESCRIPCION_CORTA']
+                    p_marca = row['ART_MARCA_PRODUCTO']
+                    clave = row['ART_SAT_CLAVE_PYS']
+                    uclave = row['ART_SAT_CLAVE_UNIDAD']
+                    data.append((p_codigo, p_descripcion, p_um, p_existencia, p_pventa, p_pcosto, p_cod_prov, p_marca, clave, uclave))
 
+                    p_codigo=''
+                    p_descripcion=''
+                    p_um=''
+                    p_existencia=''
+                    p_pventa=''
+                    p_pcosto=''
+                    p_cod_prov=''
+                    p_marca=''
+                    clave=''
+                    uclave=''
+                flash('Se ha procesado el archivo de Excel pasando a Data, Empezando a subir....','success')
+                
+                sql ="INSERT INTO ucat_productos (cp_codigo, cp_descripcion,cp_um, cp_existencia, cp_precio_venta, cp_precio_costo,cp_codigo_prov, cp_marca, cp_cod_prod_serv_sat, cp_cod_um_sat) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
-            cursor.close()    
-            flash('Se ha finalizado el ingreso Los Articulos a la Base de Datos','success')
+                cursor= db.connection.cursor()
+                cursor.executemany(sql, data)
 
+                if (len(data) == cursor.rowcount):
+                    db.connection.commit()
+                    flash('Se han ingresado ' + str(len(data)) + '  Articulos/Productos a la Base de Datos.', 'success')
+                else:
+                    db.connection.commit()
+                    flash('Ocurrio un problema al ingresar','warning')
+
+                cursor.close()    
+                flash('Se ha finalizado el ingreso Los Articulos a la Base de Datos','success')
             #return redirect(url_for('subir_data_csv'))        
     return redirect(url_for('importar_articulos'))
 
 #PROCESO PARA SUBIR LA LISTA DE CODIGO POSTAL A LA BASE DE DATOS
 @app.route('/subir_data_csv/procesarV4',methods=['POST','GET'])
+@login_required
 def subir_data_csv_procesarV4():
     if request.method == 'POST':
         archivo = request.files['inputSubir']
@@ -1444,59 +1607,71 @@ def subir_data_csv_procesarV4():
             flash('No ha seleccionado ningun archivo de Excel','warning')
             return redirect(url_for('importar_codigopostal'))
         else:
-            archivo_path = os.path.join(app.config['UPLOAD_FOLDER'],archivo.filename)
-            archivo.save(archivo_path)
-            flash('Se ha subido el archivo Excel para procesar...','success')
-            #print(archivo_path)
-            #revisar la pagina para agregar parametros
-            # https://www.digitalocean.com/community/tutorials/pandas-read_excel-reading-excel-file-in-python
-            lectura = pd.read_excel(archivo_path, sheet_name='CodigoPostal3', usecols=['d_codigo','d_asenta_poblado','d_tipo_asenta','d_municipio','d_estado','d_ciudad'])
-            flash('Realizando lectura de Excel','success')
-            #print(lectura)
-            #flash('Leyendo el archivo','success')
-            lectura.fillna('', inplace=True)
-            data=[]
-            #contador=0
-            for i,row in lectura.iterrows():
-                d_codigo = row['d_codigo']
-                d_asenta_poblado = row['d_asenta_poblado']
-                d_tipo_asenta = row['d_tipo_asenta']
-                d_municipio = row['d_municipio']
-                d_estado = row['d_estado']
-                d_ciudad = row['d_ciudad']
-                data.append((d_codigo, d_asenta_poblado, d_tipo_asenta, d_municipio, d_estado, d_ciudad))
-                                
-                d_codigo=0
-                d_asenta_poblado=''
-                d_tipo_asenta =''
-                d_municipio=''
-                d_estado=''
-                d_ciudad =''
-                #sql=''
-            flash('Se ha procesado el archivo de Excel pasando a Data, Empezando a subir....','success')
-
-            sql ="INSERT INTO ucat_codigo_postal (d_codigo, d_asenta_poblado, d_tipo_asenta, d_municipio, d_estado, d_ciudad) VALUES (%s, %s, %s, %s, %s, %s)"
-            #print(sql)
-            cursor= db.connection.cursor()
-            cursor.executemany(sql, data)
-
-            if (len(data) == cursor.rowcount):
-                db.connection.commit()
-                flash('Se han ingresado ' + str(len(data)) + '  Codigos Postales a la Base de Datos.', 'success')
+            direccion = os.path.dirname(os.path.abspath(__file__))
+            direc_join = os.path.join(direccion, app.config['UPLOAD_FOLDER'], archivo.filename)
+            #print('direccion base',direc_join)
+            #archivo_path = os.path.join(app.config['UPLOAD_FOLDER'],archivo.filename)
+            #archivo.save(archivo_path)
+            isFile = os.path.isfile(direc_join)
+            if not isFile:
+                archivo.save(direc_join)
+                flash('Se ha subido el archivo Excel para procesar...','success')
             else:
-                db.connection.rollback()
-                flash('Ocurrio un problema al ingresar','warning')
+                flash('El archivo ya existe...')
+                #archivo_path = os.path.join(app.config['UPLOAD_FOLDER'],archivo.filename)
+                #archivo.save(archivo_path)
+                flash('Se ha subido el archivo Excel para procesar...','success')
+                #print(archivo_path)
+                #revisar la pagina para agregar parametros
+                # https://www.digitalocean.com/community/tutorials/pandas-read_excel-reading-excel-file-in-python
+                lectura = pd.read_excel(direc_join, sheet_name='CodigoPostal3', usecols=['d_codigo','d_asenta_poblado','d_tipo_asenta','d_municipio','d_estado','d_ciudad'])
+                flash('Realizando lectura de Excel','success')
+                #print(lectura)
+                #flash('Leyendo el archivo','success')
+                lectura.fillna('', inplace=True)
+                data=[]
+                #contador=0
+                for i,row in lectura.iterrows():
+                    d_codigo = row['d_codigo']
+                    d_asenta_poblado = row['d_asenta_poblado']
+                    d_tipo_asenta = row['d_tipo_asenta']
+                    d_municipio = row['d_municipio']
+                    d_estado = row['d_estado']
+                    d_ciudad = row['d_ciudad']
+                    data.append((d_codigo, d_asenta_poblado, d_tipo_asenta, d_municipio, d_estado, d_ciudad))
+                                    
+                    d_codigo=0
+                    d_asenta_poblado=''
+                    d_tipo_asenta =''
+                    d_municipio=''
+                    d_estado=''
+                    d_ciudad =''
+                    #sql=''
+                flash('Se ha procesado el archivo de Excel pasando a Data, Empezando a subir....','success')
 
-            #contador +=1
-            cursor.close()
-            #print(data)
-            flash('Se ha finalizado el proceso de subir informacion sin problemas!','success')
+                sql ="INSERT INTO ucat_codigo_postal (d_codigo, d_asenta_poblado, d_tipo_asenta, d_municipio, d_estado, d_ciudad) VALUES (%s, %s, %s, %s, %s, %s)"
+                #print(sql)
+                cursor= db.connection.cursor()
+                cursor.executemany(sql, data)
+
+                if (len(data) == cursor.rowcount):
+                    db.connection.commit()
+                    flash('Se han ingresado ' + str(len(data)) + '  Codigos Postales a la Base de Datos.', 'success')
+                else:
+                    db.connection.rollback()
+                    flash('Ocurrio un problema al ingresar','warning')
+
+                #contador +=1
+                cursor.close()
+                #print(data)
+                flash('Se ha finalizado el proceso de subir informacion sin problemas!','success')
 
             #return redirect(url_for('subir_data_csv'))        
     return redirect(url_for('importar_codigopostal'))
 
 #PROCESO PARA SUBIR LA LISTA DE REGIMENES FISCALES A LA BASE DE DATOS
 @app.route('/subir_data_csv/procesarV5',methods=['POST','GET'])
+@login_required
 def subir_data_csv_procesarV5():
     if request.method == 'POST':
         archivo = request.files['inputSubir']
@@ -1505,45 +1680,57 @@ def subir_data_csv_procesarV5():
             flash('No ha seleccionado ningun archivo de Excel','warning')
             return redirect(url_for('importar_regimenfiscal'))
         else:
-            archivo_path = os.path.join(app.config['UPLOAD_FOLDER'],archivo.filename)
-            archivo.save(archivo_path)
-            flash('Se ha subido el archivo Excel para procesar...','success')
-            
-            lectura = pd.read_excel(archivo_path,sheet_name='c_RegimenFiscal', usecols=['c_RegimenFiscal', 'Descripción'])
-            flash('Realizando lectura de Excel','success')
-            #print(lectura)
-            #flash('Leyendo el archivo','success')
-            lectura.fillna('', inplace=True)
-            data=[]
-
-            for i,row in lectura.iterrows():
-                n_regimen =row['c_RegimenFiscal']
-                n_descripcion=row['Descripción']
-                data.append((n_regimen,n_descripcion))
-
-                n_regimen=''
-                n_descripcion=''
-            
-            flash('Se ha procesado el archivo de Excel pasando a Data, Empezando a subir....','success')
-
-            sql ="INSERT INTO ucat_regimen_sat (r_regimen, r_descripcion) VALUES( %s, %s)"
-            
-            cursor= db.connection.cursor()
-            cursor.executemany(sql,data)
-
-            if(len(data) == cursor.rowcount):
-                db.connection.commit()
-                flash('Se han ingresado ' + str(len(data)) + '  Regimen Fiscal a la Base de Datos.', 'success')
+            direccion = os.path.dirname(os.path.abspath(__file__))
+            direc_join = os.path.join(direccion, app.config['UPLOAD_FOLDER'], archivo.filename)
+            #print('direccion base',direc_join)
+            #archivo_path = os.path.join(app.config['UPLOAD_FOLDER'],archivo.filename)
+            #archivo.save(archivo_path)
+            isFile = os.path.isfile(direc_join)
+            if not isFile:
+                archivo.save(direc_join)
+                flash('Se ha subido el archivo Excel para procesar...','success')
             else:
-                db.connection.rollback()
-                flash('Ocurrio un problema al ingresar','warning')
-            
-            cursor.close()
-            flash('Se ha ingresado correctamente el archivo de excel a la Base de Datos','success')
+                flash('El archivo ya existe...')
+                #archivo_path = os.path.join(app.config['UPLOAD_FOLDER'],archivo.filename)
+                #archivo.save(archivo_path)
+                flash('Se ha subido el archivo Excel para procesar...','success')
+                
+                lectura = pd.read_excel(direc_join,sheet_name='c_RegimenFiscal', usecols=['c_RegimenFiscal', 'Descripción'])
+                flash('Realizando lectura de Excel','success')
+                #print(lectura)
+                #flash('Leyendo el archivo','success')
+                lectura.fillna('', inplace=True)
+                data=[]
+
+                for i,row in lectura.iterrows():
+                    n_regimen =row['c_RegimenFiscal']
+                    n_descripcion=row['Descripción']
+                    data.append((n_regimen,n_descripcion))
+
+                    n_regimen=''
+                    n_descripcion=''
+                
+                flash('Se ha procesado el archivo de Excel pasando a Data, Empezando a subir....','success')
+
+                sql ="INSERT INTO ucat_regimen_sat (r_regimen, r_descripcion) VALUES( %s, %s)"
+                
+                cursor= db.connection.cursor()
+                cursor.executemany(sql,data)
+
+                if(len(data) == cursor.rowcount):
+                    db.connection.commit()
+                    flash('Se han ingresado ' + str(len(data)) + '  Regimen Fiscal a la Base de Datos.', 'success')
+                else:
+                    db.connection.rollback()
+                    flash('Ocurrio un problema al ingresar','warning')
+                
+                cursor.close()
+                flash('Se ha ingresado correctamente el archivo de excel a la Base de Datos','success')
 
     return redirect(url_for('importar_regimenfiscal'))
 
 @app.route('/subir_data_csv/procesarV6',methods=['POST','GET'])
+@login_required
 def subir_data_csv_procesarV6():
     if request.method == 'POST':
         archivo = request.files['inputSubir']
@@ -1552,58 +1739,69 @@ def subir_data_csv_procesarV6():
             flash('No ha seleccionado ningun archivo de Excel','warning')
             return redirect(url_for('importar_ubicaciones'))
         else:
-            archivo_path = os.path.join(app.config['UPLOAD_FOLDER'],archivo.filename)
-            archivo.save(archivo_path)
-            flash('Se ha subido el archivo Excel para procesar...','success')
-            
-            lectura = pd.read_excel(archivo_path,sheet_name='UBICACION', usecols=['ANA_CLAVE', 'ANA_LADO', 'ANA_POSICION','ANA_ART_CLAVE','ANA_DESCRIPCION'])
-            flash('Realizando lectura de Excel','success')
-            #print(lectura)
-            #flash('Leyendo el archivo','success')
-            lectura.fillna('', inplace=True)
-            data=[]
-
-            for i,row in lectura.iterrows():
-                a_num =row['ANA_CLAVE']
-                a_lado=row['ANA_LADO']
-                a_lugar=row['ANA_POSICION']
-                a_codigo=row['ANA_ART_CLAVE']
-                a_descripcion=row['ANA_DESCRIPCION']
-                data.append((a_num, a_lado, a_lugar, a_codigo, a_descripcion))
-
-                n_regimen=''
-                n_descripcion=''
-            
-            flash('Se ha procesado el archivo de Excel pasando a Data, Empezando a subir....','success')
-
-            sql ="INSERT INTO ucat_ubicaciones (ana_clave, ana_lado, ana_posicion, ana_art_clave, ana_descripcion) VALUES( %s, %s, %s, %s, %s)"
-            
-            cursor= db.connection.cursor()
-            cursor.executemany(sql,data)
-
-            if(len(data) == cursor.rowcount):
-                db.connection.commit()
-                flash('Se han ingresado ' + str(len(data)) + '  Ubicaciones a la Base de Datos.', 'success')
+            direccion = os.path.dirname(os.path.abspath(__file__))
+            direc_join = os.path.join(direccion, app.config['UPLOAD_FOLDER'], archivo.filename)
+            #print('direccion base',direc_join)
+            #archivo_path = os.path.join(app.config['UPLOAD_FOLDER'],archivo.filename)
+            #archivo.save(archivo_path)
+            isFile = os.path.isfile(direc_join)
+            if not isFile:
+                archivo.save(direc_join)
+                flash('Se ha subido el archivo Excel para procesar...','success')
             else:
-                db.connection.rollback()
-                flash('Ocurrio un problema al ingresar la ubicacion','warning')
-            
-            cursor.close()
-            flash('Se ha ingresado correctamente el archivo de excel a la Base de Datos','success')
+                flash('El archivo ya existe...')
+                #archivo_path = os.path.join(app.config['UPLOAD_FOLDER'],archivo.filename)
+                #archivo.save(archivo_path)
+                flash('Se ha subido el archivo Excel para procesar...','success')
+                
+                lectura = pd.read_excel(direc_join,sheet_name='UBICACION', usecols=['ANA_CLAVE', 'ANA_LADO', 'ANA_POSICION','ANA_ART_CLAVE','ANA_DESCRIPCION'])
+                flash('Realizando lectura de Excel','success')
+                #print(lectura)
+                #flash('Leyendo el archivo','success')
+                lectura.fillna('', inplace=True)
+                data=[]
+
+                for i,row in lectura.iterrows():
+                    a_num =row['ANA_CLAVE']
+                    a_lado=row['ANA_LADO']
+                    a_lugar=row['ANA_POSICION']
+                    a_codigo=row['ANA_ART_CLAVE']
+                    a_descripcion=row['ANA_DESCRIPCION']
+                    data.append((a_num, a_lado, a_lugar, a_codigo, a_descripcion))
+                
+                flash('Se ha procesado el archivo de Excel pasando a Data, Empezando a subir....','success')
+
+                sql ="INSERT INTO ucat_ubicaciones (ana_clave, ana_lado, ana_posicion, ana_art_clave, ana_descripcion) VALUES( %s, %s, %s, %s, %s)"
+                
+                cursor= db.connection.cursor()
+                cursor.executemany(sql,data)
+
+                if(len(data) == cursor.rowcount):
+                    db.connection.commit()
+                    flash('Se han ingresado ' + str(len(data)) + '  Ubicaciones a la Base de Datos.', 'success')
+                else:
+                    db.connection.rollback()
+                    flash('Ocurrio un problema al ingresar la ubicacion','warning')
+                
+                cursor.close()
+                flash('Se ha ingresado correctamente el archivo de excel a la Base de Datos','success')
 
     return redirect(url_for('importar_ubicaciones'))
 # 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 #           FINALIZA EL AREA DE HERRAMIENTAS
 # 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 @app.route('/extras/visor1')
+@login_required
 def c_extras_visor1():
     #return render_template('catalog/prueba.html')
     return render_template('extras/practicas/rapidapi/visor_rfc.html')
 @app.route('/extras/visor2')
+@login_required
 def c_extras_visor2():
     return render_template('extras/practicas/rapidapi/visor_curp.html')
 
 @app.route('/extras/visor3')
+@login_required
 def c_extras_visor3():
     return render_template('catalog/articulos/buscador_prod_v2.html')
 
@@ -1619,11 +1817,27 @@ def status_404(error):
     date = datetime.now()
     return "<h1>Pagina no encontrada</h1><br>" + date.strftime("%Y-%m-%d %H:%M:%S"), 404
 
+@app.errorhandler(400)
+def status_400(e):
+    return render_template('error_400.html'), 400
+
+@app.errorhandler(401)
+def status_401(e):
+    return redirect(url_for('login'))
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('error_404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('error_500.html'), 500
+
 if __name__ == '__main__':
-    app.config.from_object(config['development'])
-    csrf.init_app(app)
-    app.register_error_handler(401,status_401)
-    app.register_error_handler(404,status_404)
+    #app.config.from_object(config['development'])
+    #csrf.init_app(app)
+    #app.register_error_handler(401,status_401)
+    #app.register_error_handler(404,status_404)
     app.run(debug=True)
 
 

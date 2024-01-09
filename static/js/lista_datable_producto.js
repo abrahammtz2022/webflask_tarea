@@ -26,9 +26,9 @@ let dataTableOptions = {
         },
     ],
     processing: true,
-    lengthMenu: [10, 20, 50, 100],
+    lengthMenu: [20, 50, 100],
     columnDefs: [
-        { orderable: false, target: [0, 1, 5, 6, 7, 8] },
+        { orderable: false },
         { searchable: false, target: [0, 5, 6, 7, 8] },
     ],
     // pageLength: 5,
@@ -302,8 +302,8 @@ const listUsers = async () => {
         users.forEach((producto, index) => {
             contenido += `
             <tr>
-                <td class="idT"> ${index + 1} </td>
-                <td class="prodSAT"> ${producto.prodserv} </td>
+                <td class="idT">${index + 1}</td>
+                <td class="prodSAT">${producto.prodserv}</td>
                 <td class="codigo"> ${producto.codigo} </td>
                 <td class="descrip"> ${producto.descripcion} </td>
                 <td class="codprov"> ${producto.codprov} </td>

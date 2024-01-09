@@ -1,0 +1,69 @@
+{% extends './base.html' %} {% block title %} Login {% endblock %}
+<!-- {% block
+customCSS %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/login_v2.css') }}"
+/>
+{% endblock %}  -->
+{% block body %}
+<div class="wrapper">
+  <div class="logo">
+    <!-- <img
+      src="https://www.freepnglogos.com/uploads/twitter-logo-png/twitter-bird-symbols-png-logo-0.png"
+      alt=""
+    /> -->
+    <img src="{{ url_for('static', filename='img/pv_sale.png')}}" alt="" />
+  </div>
+  <div class="text-center mt-4 name">Por favor Identificate</div>
+  <form class="p-3 mt-3" action="/login" method="POST">
+    {% with messages = get_flashed_messages(with_categories=True) %} {% if
+    messages %}
+    <br />
+    {% for category, message in messages %} {% if category == 'warning' %}
+    <div class="alert alert-warning alert-dismissible fase show" role="alert">
+      <strong style="font-size: 14px">{{ message }}</strong>
+      <button
+        type="button"
+        class="close"
+        data-dismiss="alert"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% else %}
+    <div class="alert alert-success alert-dismissible fase show" role="alert">
+      <strong style="font-size: 14px">{{ message }}</strong>
+      <button
+        type="button"
+        class="close"
+        data-dismiss="alert"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endif %} {% endfor %} {% endif %} {% endwith %}
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <div class="form-field d-flex align-items-center">
+      <span><i class="bi bi-person-check"></i></span>
+      <input type="text" name="username" id="username" placeholder="Usuario" />
+    </div>
+    <div class="form-field d-flex align-items-center">
+      <span><i class="bi bi-key"></i></span>
+      <input
+        type="password"
+        name="password"
+        id="pwd"
+        placeholder="Contraseña"
+      />
+    </div>
+    <button class="btn mt-3" type="submit">Ingresar al Sistema</button>
+  </form>
+  <div class="text-center fs-6">
+    <!-- <a href="#">Forget password?</a> or <a href="#">Sign up</a> -->
+    <p class="mt-2 mb-1 text-muted">&copy; Derechos Registrados MR-AB-MTZ</p>
+  </div>
+</div>
+{% endblock %}

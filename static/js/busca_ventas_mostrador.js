@@ -189,6 +189,7 @@ $(document).ready(function () {
             // la tecla 13, es el Enter
             if (e.key === 'Enter') {
                 removeInput(this);
+                RecalcularImportesTabla();
                 //nvo_importe = this.value;
                 //console.log(this.value);
             }

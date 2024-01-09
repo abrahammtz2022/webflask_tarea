@@ -36,15 +36,15 @@ td {
 }
 td.idT,
 th.idT {
-  width: 5%;
-  max-width: 5%;
+  width: 5px;
+  max-width: 5px;
   word-break: break-all;
   text-align: center;
 }
 td.prodSAT,
 th.prodSAT {
-  width: 8%;
-  max-width: 8%;
+  width: 8px;
+  max-width: 8px;
   word-break: break-all;
   text-align: left;
 }

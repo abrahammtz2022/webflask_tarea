@@ -1,0 +1,245 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;500&display=swap");
+ #TablaProductosV {
+  border-collapse: collapse;
+  /* border: 2px solid rgb(200, 200, 200); */
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  letter-spacing: 1px;
+  font-family: "Montserrat", sans-serif;
+  margin: 25px 0;
+  font-size: 1em;
+  animation: fadeIn 1s ease-in-out;
+  /* table-layout: auto; */
+  width: 100%;
+}
+#TablaProductosV thead tr {
+  background-color: #0d6efd;
+  color: #fff;
+  font-size: 0.7em;
+}
+#TablaProductosV tbody tr td {
+  /* text-align: left; */
+  font-size: 0.6em;
+}
+tfoot {
+  font-size: 0.7em !important;
+}
+#TablaProductosV tbody tr:hover {
+  background-color: #0d6efd !important;
+  color: #fff !important;
+  transition: background-color 0.3s ease-in-out;
+}
+#TablaProductosV td,th {
+  border: 1px solid rgb(190, 190, 190);
+  /* padding: 5px 10px; */
+}
+
+#TablaProductosV tbody td.idT, thead th.idT {
+  width: 5% !important;
+  text-align: center !important;
+}
+#TablaProductosV tbody td.prodSAT, thead th.prodSAT {
+  width: 6%;
+  text-align: left;
+}
+#TablaProductosV tbody td.codigo, thead th.codigo {
+  width: 8%;
+  text-align: left;
+}
+#TablaProductosV tbody td.descrip, thead th.descrip {
+  width: 25%;
+  text-align: left;
+}
+#TablaProductosV tbody td.codprov, thead th.codprov {
+  width: 13%;
+  text-align: left;
+}
+#TablaProductosV tbody td.um, thead th.um {
+  width: 7%;
+  text-align: center;
+}
+#TablaProductosV tbody td.pventa, thead th.pventa {
+    font-weight: bold;
+    width: 6%;
+    text-align: right;
+}
+#TablaProductosV tbody td.stock, thead th.stock {
+  width: 6%;
+  text-align: right;
+}
+#TablaProductosV tbody td.accion, thead th.accion {
+  width: 15%;
+  text-align: left;
+}
+/* #TablaKardex thead{
+    font-size: .8em;
+} */
+table#TablaKardex {
+  border-collapse: collapse;
+  /* border: 2px solid rgb(200, 200, 200); */
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  letter-spacing: 1px;
+  font-family: "Montserrat", sans-serif;
+  margin: 25px 0;
+  font-size: 1em;
+  animation: fadeIn 1s ease-in-out;
+  /* table-layout: auto; */
+  width: 85%;
+}
+#TablaKardex thead tr {
+  background-color: #1e8f08;
+  color: #ffffffc7;
+  font-size: 0.6em;
+}
+#TablaKardex tbody tr td {
+  /* text-align: left; */
+  font-size: 0.6em;
+}
+/* table#TablaKardex td,th {
+  border: 1px solid rgb(139, 64, 64);
+  /* padding: 5px 10px; 
+} */
+#TablaKardex thead th.tipo, tbody td.tipo{
+  width: 4% !important;
+  text-align: center;
+}
+#TablaKardex thead th.estado, tbody td.estado{
+  width: 5% !important;
+  text-align: center;
+  
+}
+/* div.encabezado{
+  display: flex;
+  flex-wrap: wrap;
+  
+  padding: 15px;
+  
+} */
+/* div.divcodigo{
+  flex: 10%;
+} */
+
+.lblClave, .lblDescripcion, .lblCodProd, .lblStock{
+  border-radius: 10px 10px 0 0;
+  border-left: 1px solid #0d6efd;
+  border-right: 1px solid #0d6efd;
+  background-color: darkblue;
+  color: #fff;
+  font-size: .75em;
+  padding: 3px;
+}
+p.txtClave, p.menDescripcion, p.txtCodProv, p.txtStock{
+  background-color: #fff;
+  border: 1px solid #000;
+  font-size: .6em;
+  padding: 2px;
+}
+
+
+/* CREA MARGEN SOMBREADO AL CONTENEDOR QUE MANTIENE EL DATATABLE */
+.container {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  box-sizing: border-box;
+  box-shadow: 0 0 20px 0 rgba(48, 21, 199, 0.3);
+  margin-bottom: auto;
+}
+/* CREA MARGEN SUPERIOR A LOS BOTONES DE LA TABLA DE EXPORTACION */
+div.dt-buttons {
+  padding-top: 1em;
+}
+/* CREA MARGEN INFERIOR A LOS BOTONES DE NAVEGACION  */
+div.dataTables_paginate {
+  padding-bottom: 1em;
+}
+div.dataTables_wrapper div.dataTables_filter{
+    position: relative;
+    top: -50px;
+}
+.table{
+    position: relative;
+    top: -40px;
+}
+/* DA FORMATO AL LABEL DE SEARCH QUE NO CUENTA CON ID */
+div.dataTables_wrapper div.dataTables_filter label {
+  color: #0d6efd;
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+/* DA FORMATO AL LABEL DE LA SEPARACION DE FILAS(MOSTRAR) */
+div.dataTables_wrapper div.dataTables_length label {
+  color: #0d6efd;
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+/* DA FORMATO AL LABEL DE MOSTRANDO ENTRADAS */
+div.dataTables_wrapper div.dataTables_info {
+  color: #0d6efd;
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+/* div#TablaMostrador_length{
+    position:absolute; top:1px; left:0;
+  } */
+/* DA FORMATO AL SELECT DE MOSTRAR FILAS */
+div.dataTables_wrapper div.dataTables_length .form-select {
+  outline: 1px solid #0d6efd;
+  box-shadow: 3px 3px 5px #0d9fff;
+  font-size: 1.1rem;
+  background-color: #fff;
+  color: #0d6efd;
+}
+/* FORMATO AL INPUT SEARCH QUE NO CUENTA CON ID NI NAME */
+input[type="search"] {
+  width: 300px;
+  margin-bottom: 7px;
+  margin-top: 15px;
+  font-size: 20px;
+  border: 2;
+  outline: 1px solid black;
+  box-shadow: 3px 3px 5px #0d6efd;
+  padding: 5px 9px;
+  background-color: #fff;
+  color: #0d6efd;
+}
+/* DA FORMATO AL FOCUS DEL INPUT SEARCH */
+input[type="search"]:focus {
+  /* color: black; */
+  outline: 1px solid #0d6efd;
+  box-shadow: 0 0 5px 5px #0d9fff;
+}
+/* LE DA FORMATO SOMBREADO AL BOTON DE AGREGAR */
+.botoncito {
+  box-shadow: 3px 3px 5px #0d6efd;
+}
+@keyframes fadein{
+  from{
+      opacity: 0;
+  }
+  to{
+      opacity: 1;
+  }
+}
+/* @media screen{
+  .modal-body {
+    display: none;
+  }
+} */
+@media print {
+  @page {
+    margin:2cm;
+  }
+  
+  table#TablaKardex thead tr{ 
+    background-color: #000 !important; 
+    color: #fff; 
+    font-size: 0.9em; 
+    -webkit-print-color-adjust: exact; 
+    print-color-adjust: exact;
+  }
+}
