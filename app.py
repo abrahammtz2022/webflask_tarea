@@ -12,7 +12,7 @@ import locale
 
 #from werkzeug.security import generate_password_hash
 from datetime import datetime
-from config import config
+#from config import config
 #Models:
 # from models.ModelUser import ModelUser
 from models.ModelUser import ModelUsuarios
