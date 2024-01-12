@@ -148,13 +148,13 @@
             <tfoot>
               <tr>
                 <td colspan="6" class="text-center fw-bolder">Totales:</td>
-                <td id="SumaEnt" class="derecha"></td>
-                <td id="SumaSal" class="derecha"></td>
-                <td id="SumaStock" class="derecha"></td>
+                <td id="SumaEnt" class="text-end"></td>
+                <td id="SumaSal" class="text-end"></td>
+                <td id="SumaStock" class="text-end"></td>
                 <td>*******</td>
-                <td id="SumaImpEnt" class="derecha"></td>
-                <td id="SumaImpSal" class="derecha"></td>
-                <td id="SumaImpStock" class="derecha"></td>
+                <td id="SumaImpEnt" class="text-end"></td>
+                <td id="SumaImpSal" class="text-end"></td>
+                <td id="SumaImpStock" class="text-end "></td>
               </tr>
             </tfoot>
           </table>
@@ -171,6 +171,7 @@
   <div id="elementH"></div>
 <div class="row mt-2"></div>
 {% include './pie_index.html' %} {% block jscript %}
+
 <script src="{{ url_for('static', filename='js/lista_datable_producto_v2.js')}}"></script>
 <script src="{{ url_for('static', filename='drivers/html2pdf.bundle.min.js')}}" ></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js"></script>

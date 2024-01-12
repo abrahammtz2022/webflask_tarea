@@ -23,7 +23,8 @@
   font-size: 0.6em;
 }
 tfoot {
-  font-size: 0.7em !important;
+  font-size: 0.6em !important;
+  align-items: end;
 }
 #TablaProductosV tbody tr:hover {
   background-color: #0d6efd !important;
@@ -242,4 +243,22 @@ input[type="search"]:focus {
     -webkit-print-color-adjust: exact; 
     print-color-adjust: exact;
   }
+}
+/* Cuando la pantalla es menor a 900px  (tablets y teléfonos inteligentes)*/
+@media only screen and (max-width : 900px) {
+  /* .dataTables_filter{
+    left: 40px !important;
+  } */
+  input[type="search"] {
+    width: 225px !important;
+  }
+  div.dataTables_wrapper div.dataTables_filter{
+    position: relative;
+    top: -5px;
+  }
+  .table{
+    position: relative;
+    top: -5px;
+  }
+	
 }

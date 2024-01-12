@@ -118,12 +118,17 @@ def c_productosv_json():
 
     return jsonify(data)
 
-@app.route('/catalogo/productosv_jsonv2',methods=['GET','POST'])
+@app.route('/catalogo/productosv_jsonv2')
 @login_required
 def c_productosv_jsonv2():
     
+    l_sucursal = request.args.get('sucursal','', type=str)
+    #print(l_sucursal)
+    
     cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("SELECT id,cp_cod_prod_serv_sat,cp_codigo,cp_descripcion,cp_codigo_prov,cp_um,cp_precio_venta,cp_existencia FROM ucat_productos ")
+    n_sql_cat ="SELECT id,cp_cod_prod_serv_sat,cp_codigo,cp_descripcion,cp_codigo_prov,cp_um,cp_precio_venta,cp_existencia FROM ucat_productos where cp_sucursal={0}".format(l_sucursal)
+    #print(n_sql_cat)
+    cursor.execute(n_sql_cat)
     productos = cursor.fetchall()
 
     data = []
@@ -317,9 +322,13 @@ def c_umsat_json_cadena():
 @app.route('/catalogo/mostrador_json_cadena',methods=["GET"])
 @login_required
 def c_mostrador_json_cadena():
-
+    
+    a = request.args.get('sucursal', '', type=str)
+    print(a)
     cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("SELECT * FROM ucat_productos")
+    sql_a = "SELECT * FROM ucat_productos where cp_sucursal={0}".format(a)
+    print(sql_a)
+    cursor.execute(sql_a)
     productos = cursor.fetchall()
         
     data = []
@@ -454,15 +463,21 @@ def c_oper_muuestra_kardex_codigo():
     new_sql = """SELECT id as ID,DATE(ukp_fecha) as FECHA,ukp_codigo as CODIGO,ukp_estado as ESTADO,ukp_tipo as TIPO,ukp_folio AS FOLIO,
                 case when (ukp_tipo) = 'V' then 'Ventas(SALIDAS)'
                      when (ukp_tipo) = 'C' then 'Compras(ENTRADAS)'
+                     when (ukp_tipo) = 'I' then 'Inventario Inicial(ENTRADAS)'
                      END AS MOVIMIENTOS,
-                (case when ukp_tipo='C' then ukp_cant else 0 end ) AS ENT,
+                (case when ukp_tipo='I' then ukp_cant else 0 end +
+                 case when ukp_tipo='C' then ukp_cant else 0 end ) AS ENT,
                 (case when ukp_tipo='V' then ukp_cant else 0 end ) AS SAL,
-                (case when ukp_tipo='C' then ukp_cant else 0 end ) -
+                (case when ukp_tipo='I' then ukp_cant else 0 end +
+                 case when ukp_tipo='C' then ukp_cant else 0 end) -
                 (case when ukp_tipo='V' then ukp_cant else 0 end ) AS EXIST,
                 ukp_costo AS COSTO,
-                (case when ukp_tipo='C' then ukp_cant*ukp_costo else 0 end ) AS MOV_ENT,
+                (case when ukp_tipo='I' then ukp_cant*ukp_costo else 0 end +
+                 case when ukp_tipo='C' then ukp_cant*ukp_costo else 0 end) AS MOV_ENT,
                 (case when ukp_tipo='V' then ukp_cant*ukp_costo else 0 end  ) AS MOV_SAL,
-                '0.00' AS MOV_INV
+                (case when ukp_tipo='I' then ukp_cant*ukp_costo else 0 end +
+                 case when ukp_tipo='C' then ukp_cant*ukp_costo else 0 end) -
+                (case when ukp_tipo='V' then ukp_cant*ukp_costo else 0 end  )AS MOV_INV
                 FROM upro_kardex_producto
                 WHERE ukp_codigo= '{0}'
                 order by ukp_fecha""".format(clave)
@@ -531,7 +546,6 @@ def c_venta_mostrador_fecha():
     cursor.close()
     #print(numero)
     return jsonify(result=n_fecha)
-
 
 @app.route('/catalogo/regimen_json_cadena',methods=["GET"])
 @login_required
@@ -624,6 +638,11 @@ def c_clientesv_json():
 @login_required
 def c_productos():
     return render_template('catalog/articulos/cat_product_v2.html')
+
+@app.route('/catalogo/productos/buscador_mostrador')
+@login_required
+def c_extras_visor3():
+    return render_template('catalog/articulos/buscador_prod_v2.html')
 
 @app.route('/catalogo/productos/agregar_ver')
 @login_required
@@ -1540,6 +1559,7 @@ def subir_data_csv_procesarV3():
             if not isFile:
                 archivo.save(direc_join)
                 flash('Se ha subido el archivo Excel para procesar...','success')
+                flash('Suba de nuevo el Archivo','success')
             else:
                 flash('El archivo ya existe...')
                 #archivo_path = os.path.join(app.config['UPLOAD_FOLDER'],archivo.filename)
@@ -1548,7 +1568,7 @@ def subir_data_csv_procesarV3():
                 #print(archivo_path)
                 #revisar la pagina para agregar parametros
                 # https://www.digitalocean.com/community/tutorials/pandas-read_excel-reading-excel-file-in-python
-                lectura = pd.read_excel(direc_join,sheet_name='Articulos', usecols=['ART_CLAVE', 'ART_DESCRIPCION','ART_UM_CLAVE','ART_EXISTENCIA','ART_PRECIO_VENTA','ART_PRECIO_PROMEDIO','ART_DESCRIPCION_CORTA','ART_MARCA_PRODUCTO','ART_SAT_CLAVE_PYS','ART_SAT_CLAVE_UNIDAD'])
+                lectura = pd.read_excel(direc_join,sheet_name='Articulos', usecols=['ART_CLAVE', 'ART_DESCRIPCION','ART_UM_CLAVE','ART_EXISTENCIA','ART_PRECIO_VENTA','ART_PRECIO_PROMEDIO','ART_DESCRIPCION_CORTA','ART_MARCA_PRODUCTO','ART_SAT_CLAVE_PYS','ART_SAT_CLAVE_UNIDAD','ART_SUCURSAL'])
                 flash('Realizando lectura de Excel','success')
                 #print(lectura)
                 #flash('Leyendo el archivo','success')
@@ -1565,7 +1585,8 @@ def subir_data_csv_procesarV3():
                     p_marca = row['ART_MARCA_PRODUCTO']
                     clave = row['ART_SAT_CLAVE_PYS']
                     uclave = row['ART_SAT_CLAVE_UNIDAD']
-                    data.append((p_codigo, p_descripcion, p_um, p_existencia, p_pventa, p_pcosto, p_cod_prov, p_marca, clave, uclave))
+                    p_sucursal = row['ART_SUCURSAL']
+                    data.append((p_codigo, p_descripcion, p_um, p_existencia, p_pventa, p_pcosto, p_cod_prov, p_marca, clave, uclave, p_sucursal))
 
                     p_codigo=''
                     p_descripcion=''
@@ -1577,9 +1598,10 @@ def subir_data_csv_procesarV3():
                     p_marca=''
                     clave=''
                     uclave=''
+                    p_sucursal=''
                 flash('Se ha procesado el archivo de Excel pasando a Data, Empezando a subir....','success')
                 
-                sql ="INSERT INTO ucat_productos (cp_codigo, cp_descripcion,cp_um, cp_existencia, cp_precio_venta, cp_precio_costo,cp_codigo_prov, cp_marca, cp_cod_prod_serv_sat, cp_cod_um_sat) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                sql ="INSERT INTO ucat_productos (cp_codigo, cp_descripcion,cp_um, cp_existencia, cp_precio_venta, cp_precio_costo,cp_codigo_prov, cp_marca, cp_cod_prod_serv_sat, cp_cod_um_sat, cp_sucursal) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
                 cursor= db.connection.cursor()
                 cursor.executemany(sql, data)
@@ -1800,10 +1822,7 @@ def c_extras_visor1():
 def c_extras_visor2():
     return render_template('extras/practicas/rapidapi/visor_curp.html')
 
-@app.route('/extras/visor3')
-@login_required
-def c_extras_visor3():
-    return render_template('catalog/articulos/buscador_prod_v2.html')
+
 
 @app.route('/protected')
 @login_required

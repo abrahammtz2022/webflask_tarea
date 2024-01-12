@@ -332,6 +332,7 @@ const listClientes = async () => {
 window.addEventListener("load", async () => {
     await initDataTableCTE();
 });
+
 $('#TablaClientes tbody').on('click', 'button', dataTableCTE, function () {
     const cte_rfc = dataTableCTE.row($(this).parents('tr')).data();
     console.log(cte_rfc[1]);

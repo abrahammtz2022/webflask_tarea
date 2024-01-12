@@ -212,6 +212,10 @@ $(document).ready(function () {
         $('#txtVentaComentario').val('Nota de Venta =>' + div_selec[0] + valor);
         //console.log('arreglo modificado: ',arregloDetalle);
     });
+    var sucursal = $('#txtNoSucursal').val();
+    let separa_suc = sucursal.toString().split('-')
+    let num_suc = separa_suc[0].trim();
+    console.log(num_suc);
     $('#submit').on('click', function () {
         //alert('click en el boton');
 
@@ -365,26 +369,40 @@ $(document).ready(function () {
             }
         });
     });
-    $.ajax({
-        url: '/catalogo/mostrador_json_cadena',
-        success: function (response) {
-            console.log("[mostrador]La Api conecto correctamente!");
-            document.getElementById("fondo").style.display = "none";
-            document.getElementById("bloquea").style.display = "none";
-            $('#txtVentaCodigoEscanea').autocomplete({
-                delay: 500,
-                source: response["mostrador"],
-                minLength: 2,
-                select: function (event, ui) {
-                    //console.log( "Selected: " + ui.item.value + " aka " + ui.item.id );
-                    //alert(ui.item.value);
-                    codigo_escaneo = ui.item.value;
-                    $('#btnAgregar').focus();
-                }
-            })
-        }
-
-    });
+    if(separa_suc.length == 2){
+        $.ajax({
+            url: '/catalogo/mostrador_json_cadena',
+            data: {
+                sucursal:num_suc.toString(),
+            },
+            success: function (response) {
+                console.log("[mostrador]La Api conecto correctamente!");
+                document.getElementById("fondo").style.display = "none";
+                document.getElementById("bloquea").style.display = "none";
+                $('#txtVentaCodigoEscanea').autocomplete({
+                    delay: 500,
+                    source: response["mostrador"],
+                    minLength: 2,
+                    select: function (event, ui) {
+                        //console.log( "Selected: " + ui.item.value + " aka " + ui.item.id );
+                        //alert(ui.item.value);
+                        codigo_escaneo = ui.item.value;
+                        $('#btnAgregar').focus();
+                    }
+                })
+            }
+    
+        });
+    }else{
+        //console.log('ocurrio un problema al cargar el numero de surcursal');
+        Swal.fire({
+            title: "ERROR EN SISTEMA",
+            text: "Hay un problema al cargar el numero de sucursal, verifique si lo tiene asignado!",
+            icon: "error"
+          });
+        return false;
+    }
+    
 });
 //funcion para redondear a mas de dos digitos
 function redondearToX(num, decimals) {
